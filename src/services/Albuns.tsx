@@ -31,7 +31,7 @@ async function FetchAlbums(artist: string): Promise<AlbumData[]> {
 
 async function HandleAlbum(album: AlbumData) {
     let uri = "";
-    if (album.id === "") {
+    if (album.id == undefined || album.id === "") {
         uri = `https://${process.env.REACT_APP_API_DOMAIN}/new/album`;
     }
     else {
