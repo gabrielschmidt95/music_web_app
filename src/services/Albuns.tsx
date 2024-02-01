@@ -41,17 +41,42 @@ async function HandleAlbum(album : AlbumData) {
         },
         body: JSON.stringify(album)
     };
-    var response = await fetch(`https://${process.env.REACT_APP_API_DOMAIN}/new/album`, requestOptions);
+    let response = await fetch(`https://${process.env.REACT_APP_API_DOMAIN}/new/album`, requestOptions);
     console.log(response.text());
     if (response.status === 401) {
         await Token();
         token = sessionStorage.getItem("token");
-        response = await fetch(`https://${process.env.REACT_APP_API_DOMAIN}/new/album`, requestOptions);
+        await fetch(`https://${process.env.REACT_APP_API_DOMAIN}/new/album`, requestOptions);
+    }
+
+}
+
+async function RemoveAlbum(id : string) {
+    console.log(id);
+    if (token === null) {
+        await Token();
+        token = sessionStorage.getItem("token");
+    }
+    const requestOptions = {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + token
+        },
+        body: JSON.stringify({id: id})
+    };
+    let response = await fetch(`https://${process.env.REACT_APP_API_DOMAIN}/delete/album`, requestOptions);
+    console.log(response.text());
+    if (response.status === 401) {
+        await Token();
+        token = sessionStorage.getItem("token");
+        await fetch(`https://${process.env.REACT_APP_API_DOMAIN}/new/album`, requestOptions);
     }
 
 }
 
 export {
     FetchAlbums,
-    HandleAlbum
+    HandleAlbum,
+    RemoveAlbum
 }

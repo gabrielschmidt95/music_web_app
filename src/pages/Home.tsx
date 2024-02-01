@@ -14,12 +14,13 @@ import Image from 'react-bootstrap/Image';
 
 import AlbumData from '../models/Album'
 import Artists from '../services/Artists'
-import {FetchAlbums,HandleAlbum} from '../services/Albuns';
+import {FetchAlbums,HandleAlbum, RemoveAlbum} from '../services/Albuns';
 import DateTimeFormat from '../services/Utils';
 
 const Home: React.FunctionComponent = () => {
     const [albuns, setAlbuns] = useState<AlbumData[]>();
     const [albumInfo, setAlbumInfo] = useState<AlbumData>();
+    const [artist, setArtist] = useState<{ value: string; label: string; }>();
 
     const [showModal, setShowModal] = useState(false);
 
@@ -56,8 +57,11 @@ const Home: React.FunctionComponent = () => {
         event.preventDefault();
         setValidated(true);
         HandleAlbum(formValues as AlbumData);
-        //handleCloseModal();
-        //setShowAlert(true);
+        setAlbuns(undefined);
+        setAlbumInfo(undefined);
+        setArtist({ value: '', label: '' });
+        handleCloseModal();
+        setShowAlert(true);
     }
 
     const handleInputChange = (title: string, event: any) => {
@@ -82,6 +86,12 @@ const Home: React.FunctionComponent = () => {
                                 if (e?.value) {
                                     setAlbuns(undefined);
                                     setAlbumInfo(undefined);
+                                    setArtist(
+                                        {
+                                            value: e.value,
+                                            label: e.value
+                                        }
+                                    );
                                     FetchAlbums(e.value).then((data) => {
                                         setAlbuns(data)
                                     });
@@ -90,6 +100,7 @@ const Home: React.FunctionComponent = () => {
                         }
                             placeholder="Selecione o artista"
                             isClearable={true}
+                            value={artist}
                         />
                     </Col>
                     <Col xs={2}>
@@ -127,11 +138,6 @@ const Home: React.FunctionComponent = () => {
                                                 <Card.Body>
                                                     <Card.Title>{item.title}</Card.Title>
                                                     <Card.Subtitle className="mb-2 text-muted">{item.artist}</Card.Subtitle>
-                                                    <ListGroup variant="flush">
-                                                        <ListGroup.Item>Ano: {item.releaseYear}</ListGroup.Item>
-                                                        <ListGroup.Item>Mídia: {item.media}</ListGroup.Item>
-                                                        <ListGroup.Item>Origem: {item.origin}</ListGroup.Item>
-                                                    </ListGroup>
                                                 </Card.Body>
                                             </Card>
                                         </Col>
@@ -204,7 +210,14 @@ const Home: React.FunctionComponent = () => {
                                         </Button>
                                     </Col>
                                     <Col>
-                                        <Button variant="danger">
+                                        <Button variant="danger" onClick={  
+                                            () => {
+                                                RemoveAlbum(albumInfo.id);
+                                                setAlbuns(undefined);
+                                                setAlbumInfo(undefined);
+                                                setArtist({ value: '', label: '' });
+                                            }
+                                        }>
                                             Deletar
                                         </Button>
                                     </Col>
