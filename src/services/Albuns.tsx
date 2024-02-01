@@ -1,7 +1,8 @@
 import AlbumData from '../models/Album';
 import Token from './Token';
+import GetDiscogs from './Discogs';
 
-var token = sessionStorage.getItem("token")
+let token = sessionStorage.getItem("token")
 
 async function FetchAlbums(artist: string): Promise<AlbumData[]> {
     if (token === null) {
@@ -16,7 +17,7 @@ async function FetchAlbums(artist: string): Promise<AlbumData[]> {
         },
         body: JSON.stringify({ artist: artist })
     };
-    var response = await fetch(`https://${process.env.REACT_APP_API_DOMAIN}/album/artist`, requestOptions);
+    let response = await fetch(`https://${process.env.REACT_APP_API_DOMAIN}/album/artist`, requestOptions);
     if (response.status === 401) {
         await Token();
         token = sessionStorage.getItem("token");
@@ -28,7 +29,7 @@ async function FetchAlbums(artist: string): Promise<AlbumData[]> {
 
 
 async function HandleAlbum(album : AlbumData) {
-    console.log(album);
+    album.discogs = await GetDiscogs(album);
     if (token === null) {
         await Token();
         token = sessionStorage.getItem("token");

@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 import Token from './Token';
 
+let token = sessionStorage.getItem("token")
 
 async function fetchArtists(): Promise<string[]> {
-    var token = sessionStorage.getItem("token")
     if (token === null) {
         await Token();
         token = sessionStorage.getItem("token");
@@ -15,7 +15,7 @@ async function fetchArtists(): Promise<string[]> {
             'Authorization': 'Bearer ' + token
         }
     };
-    var response = await fetch(`https://${process.env.REACT_APP_API_DOMAIN}/artists`, requestOptions);
+    let response = await fetch(`https://${process.env.REACT_APP_API_DOMAIN}/artists`, requestOptions);
     if (response.status === 401) {
         await Token();
         token = sessionStorage.getItem("token");
