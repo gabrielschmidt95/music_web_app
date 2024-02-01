@@ -67,7 +67,7 @@ const Home: React.FunctionComponent = () => {
         setValidated(true);
 
         if (formValues.artist === '') {
-            if (artist != undefined && artist.value === '') {
+            if (artist !== undefined && artist.value === '') {
                 formValues.artist = artist.value;
             } else {
                 event.preventDefault();

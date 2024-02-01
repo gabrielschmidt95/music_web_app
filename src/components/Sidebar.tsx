@@ -1,8 +1,19 @@
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
+import { Image, Row, Col, Button } from 'react-bootstrap'
 
 
 import { SidebarData } from './SidebarData';
+
+const SidebarBottom = styled.div`
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: start;
+`
 
 const SidebarMenu = styled.div` 
     width: 100%;
@@ -40,21 +51,37 @@ const MenuItemLinks = styled(Link)`
 `
 
 const Home: React.FunctionComponent = () => {
+    console.log(JSON.parse(localStorage.getItem('user') ?? '{}'));
     return (
-        <SidebarMenu>
-            <h2 style={{ marginLeft: '16px', color:'white', paddingTop:'1rem'}}>Music Collection</h2>
-            <br />
-            {SidebarData.map((item) => {
-                return (
-                    <MenuItems key={item.title}>
-                        <MenuItemLinks to={item.path}>
-                            {item.icon}
-                            <span style={{ marginLeft: '16px' }}>{item.title}</span>
-                        </MenuItemLinks>
-                    </MenuItems>
-                )
-            })}
-        </SidebarMenu>
+        <>
+            <SidebarMenu>
+                <h2 style={{ marginLeft: '16px', color: 'white', paddingTop: '1rem' }}>Music Collection</h2>
+                {SidebarData.map((item) => {
+                    return (
+                        <MenuItems key={item.title}>
+                            <MenuItemLinks to={item.path}>
+                                {item.icon}
+                                <span style={{ marginLeft: '16px' }}>{item.title}</span>
+                            </MenuItemLinks>
+                        </MenuItems>
+                    )
+                })}
+
+            </SidebarMenu>
+            <SidebarBottom>
+                <Row>
+                    <Col >
+                        <Image src={JSON.parse(localStorage.getItem('user') ?? '{}').photoURL} roundedCircle style={{ width: '50px', height: '50px', marginLeft: '16px' }} />
+                    </Col>
+                    <Col >
+                        <span style={{ marginLeft: '16px', color: 'white' }}>{JSON.parse(localStorage.getItem('user') ?? '{}').displayName}</span>
+                    </Col>
+                    <Col >
+                        <Button variant="outline-light" style={{ marginLeft: '16px', marginTop: '1rem' }} onClick={() => { localStorage.removeItem('user'); window.location.reload() }}>Logout</Button>
+                    </Col>
+                </Row>
+            </SidebarBottom >
+        </>
     )
 }
 
