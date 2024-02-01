@@ -16,6 +16,9 @@ const Home: React.FunctionComponent = () => {
     const handleCloseModal = () => setShowModal(false);
     const handleShowModal = () => setShowModal(true);
 
+    const [newArtist, setNewArtist] = useState(false);
+
+
     const [showModalFixDiscogs, setShowModalFixDiscogs] = useState(false);
     const handleCloseModalFixDiscogs = () => setShowModalFixDiscogs(false);
     const handleShowModalFixDiscogs = () => setShowModalFixDiscogs(true);
@@ -58,13 +61,29 @@ const Home: React.FunctionComponent = () => {
         if (form.checkValidity() === false) {
             event.preventDefault();
             event.stopPropagation();
+            return;
         }
         event.preventDefault();
         setValidated(true);
-        HandleAlbum(formValues as AlbumData);
-        clearContent();
-        handleCloseModal();
-        setShowAlert(true);
+
+        if (formValues.artist === '') {
+            if (artist != undefined && artist.value === '') {
+                formValues.artist = artist.value;
+            } else {
+                event.preventDefault();
+                event.stopPropagation();
+                return;
+            }
+        }
+        HandleAlbum(formValues as AlbumData).then((data) => {
+            clearContent();
+            handleCloseModal();
+            setArtist({ value: formValues.artist, label: formValues.artist });
+            setShowAlert(true);
+            FetchAlbums(formValues.artist).then((data) => {
+                setAlbuns(data)
+            });
+        });
     }
 
     const handleSubmitFixDiscogs = (event: React.FormEvent<HTMLFormElement>) => {
@@ -137,18 +156,27 @@ const Home: React.FunctionComponent = () => {
                                     padding: '1rem',
                                     height: '90vh',
                                     overflowY: 'auto',
-                                    boxShadow: '0 4px 8px 0 rgba(0,0,0,0.2)'
+                                    boxShadow: '0 4px 8px 0 rgba(0,0,0,0.2)',
+                                    borderRadius: '1rem'
                                 }
                             }>
-                                <Row>
+                                <Row md="auto">
                                     {albuns.map((item, _) => (
                                         <Col key={item.id} style={{ padding: '1rem' }}>
-                                            <Card style={{ width: '20rem', boxShadow: '0 4px 8px 0 rgba(0,0,0,0.2)' }} key={item.id} onClick={
-                                                () => {
-                                                    console.log(item.id)
-                                                    setAlbumInfo(item)
-                                                    setFormValues(item)
+                                            <Card style={
+                                                {
+                                                    width: '20rem',
+                                                    boxShadow: '0 4px 8px 0 rgba(0,0,0,0.2)',
+                                                    borderRadius: '1rem',
                                                 }
+                                            }
+                                            key={item.id}
+                                            onClick={
+                                                    () => {
+                                                        console.log(item.id)
+                                                        setAlbumInfo(item)
+                                                        setFormValues(item)
+                                                    }
                                             }>
                                                 <Card.Img variant="top" src={item.discogs.cover_image} style={{ width: '18rem', height: '18rem', paddingLeft: '1rem', paddingTop: '1rem' }} />
                                                 <Card.Body>
@@ -168,7 +196,8 @@ const Home: React.FunctionComponent = () => {
                                 {
                                     padding: '1rem',
                                     height: '90vh',
-                                    boxShadow: '0 4px 8px 0 rgba(0,0,0,0.2)'
+                                    boxShadow: '0 4px 8px 0 rgba(0,0,0,0.2)',
+                                    borderRadius: '1rem'
                                 }
                             }>
                                 <h1>Informações do Album</h1>
@@ -301,17 +330,55 @@ const Home: React.FunctionComponent = () => {
                                 defaultValue={albumInfo?.title}
                                 autoFocus
                                 onChange={
-                                    (e) => handleInputChange('title', e.target.value)
+                                    (e) => handleInputChange('title', e.target.value.toUpperCase())
                                 }
                             />
                         </Form.Group>
                         <Form.Group className="mb-3" controlId="editForm.ControlInput2">
                             <Form.Label>Artista</Form.Label>
-                            <Select options={Artists()}
-                                onChange={
-                                    (e) => e ? handleInputChange('artist', e?.value) : ''
+                            <Form.Control
+                                style={
+                                    {
+                                        display: newArtist ? 'block' : 'none'
+                                    }
                                 }
-                                defaultValue={artist}
+                                required
+                                placeholder='Novo Artista'
+                                type="text"
+                                onChange={
+                                    (e) => handleInputChange('artist', e.target.value.toUpperCase())
+                                }
+                            />
+                            <Form.Select required aria-label="Default select example"
+                                style={
+                                    {
+                                        display: newArtist ? 'none' : 'block'
+                                    }
+                                }
+                                onChange={
+                                    (e) => handleInputChange('artist', e.target.value)
+                                }
+                                defaultValue={artist?.value}
+                            >
+                                <option value={""}>Selecione o Artista</option>
+                                {Artists().map((item, _) => (
+                                    <option key={item.value}>{item.value}</option>
+                                ))}
+                            </Form.Select>
+
+                            <Form.Check
+                                type="checkbox"
+                                id="editForm.ControlInput2"
+                                label="Novo Artista"
+                                onChange={
+                                    (e) => {
+                                        if (e.target.checked) {
+                                            setNewArtist(true);
+                                        } else {
+                                            setNewArtist(false);
+                                        }
+                                    }
+                                }
                             />
                         </Form.Group>
                         <Form.Group className="mb-3" controlId="editForm.ControlInput3">
@@ -460,11 +527,17 @@ const Home: React.FunctionComponent = () => {
                     <Button variant="danger" onClick={
                         () => {
                             if (albumInfo)
-                                RemoveAlbum(albumInfo.id);
-                            setAlbuns(undefined);
-                            setAlbumInfo(undefined);
-                            setArtist({ value: '', label: '' });
-                            handleCloseModalDelete();
+                                RemoveAlbum(albumInfo.id).then((data) => {
+                                    clearContent();
+                                    setAlbuns(undefined);
+                                    setAlbumInfo(undefined);
+                                    setArtist({ value: albumInfo.artist, label: albumInfo.artist });
+                                    handleCloseModalDelete();
+                                    FetchAlbums(albumInfo.artist).then((data) => {
+                                        setAlbuns(data)
+                                    });
+                                });
+
                         }
                     }>Deletar</Button>
                 </Modal.Footer>
