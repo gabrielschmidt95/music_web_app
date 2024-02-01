@@ -15,7 +15,7 @@ import Image from 'react-bootstrap/Image';
 
 import AlbumData from '../models/Album'
 import Artists from '../services/Artists'
-import {FetchAlbums,HandleAlbum, RemoveAlbum} from '../services/Albuns';
+import { FetchAlbums, HandleAlbum, RemoveAlbum, UpdateDiscogs } from '../services/Albuns';
 import DateTimeFormat from '../services/Utils';
 
 const Home: React.FunctionComponent = () => {
@@ -24,15 +24,20 @@ const Home: React.FunctionComponent = () => {
     const [artist, setArtist] = useState<{ value: string; label: string; }>();
 
     const [showModal, setShowModal] = useState(false);
-
     const handleCloseModal = () => setShowModal(false);
     const handleShowModal = () => setShowModal(true);
+
+    const [showModalFixDiscogs, setShowModalFixDiscogs] = useState(false);
+    const handleCloseModalFixDiscogs = () => setShowModalFixDiscogs(false);
+    const handleShowModalFixDiscogs = () => setShowModalFixDiscogs(true);
 
     const [showAlert, setShowAlert] = useState(false);
 
     const [modalType, setModalType] = useState<string>("None");
 
     const [validated, setValidated] = useState(false);
+    const [validatedFixDiscogs, setValidatedFixDiscogs] = useState(false);
+    const [fixDiscogs, setFixDiscogs] = useState<string>('');
 
     const [formValues, setFormValues] = useState({
         title: '',
@@ -49,6 +54,12 @@ const Home: React.FunctionComponent = () => {
         lote: ''
     });
 
+    function clearContent() {
+        setAlbuns(undefined);
+        setAlbumInfo(undefined);
+        setArtist({ value: '', label: '' });
+    }
+
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         const form = event.currentTarget;
         if (form.checkValidity() === false) {
@@ -58,11 +69,22 @@ const Home: React.FunctionComponent = () => {
         event.preventDefault();
         setValidated(true);
         HandleAlbum(formValues as AlbumData);
-        setAlbuns(undefined);
-        setAlbumInfo(undefined);
-        setArtist({ value: '', label: '' });
+        clearContent();
         handleCloseModal();
         setShowAlert(true);
+    }
+
+    const handleSubmitFixDiscogs = (event: React.FormEvent<HTMLFormElement>) => {
+        const form = event.currentTarget;
+        if (form.checkValidity() === false) {
+            event.preventDefault();
+            event.stopPropagation();
+        }
+        event.preventDefault();
+        setValidatedFixDiscogs(true);
+        UpdateDiscogs(fixDiscogs, albumInfo as AlbumData);
+        clearContent();
+        handleCloseModalFixDiscogs();
     }
 
     const handleInputChange = (title: string, event: any) => {
@@ -100,7 +122,6 @@ const Home: React.FunctionComponent = () => {
                             }
                         }
                             placeholder="Selecione o artista"
-                            isClearable={true}
                             value={artist}
                         />
                     </Col>
@@ -133,6 +154,7 @@ const Home: React.FunctionComponent = () => {
                                                 () => {
                                                     console.log(item.id)
                                                     setAlbumInfo(item)
+                                                    setFormValues(item)
                                                 }
                                             }>
                                                 <Card.Img variant="top" src={item.discogs.cover_image} style={{ width: '18rem', height: '18rem', paddingLeft: '1rem', paddingTop: '1rem' }} />
@@ -190,15 +212,19 @@ const Home: React.FunctionComponent = () => {
                                                 window.open(albumInfo.spotify.external_urls.spotify, '_blank')
                                             }
 
-                                        }>Spotify</Button>
+                                        }
+                                            disabled={albumInfo.spotify.external_urls.spotify === ''}
+                                        >Spotify</Button>
                                     </Col>
                                     <Col>
                                         <Button variant="dark" onClick={
                                             () => {
-                                                window.open(albumInfo.spotify.external_urls.spotify, '_blank')
+                                                window.open(albumInfo.discogs.uri, '_blank')
                                             }
 
-                                        }>Discogs</Button>
+                                        }
+                                            disabled={albumInfo.discogs.uri === ''}
+                                        >Discogs</Button>
                                     </Col>
                                     <Col>
                                         <Button variant="primary" onClick={
@@ -211,7 +237,7 @@ const Home: React.FunctionComponent = () => {
                                         </Button>
                                     </Col>
                                     <Col>
-                                        <Button variant="danger" onClick={  
+                                        <Button variant="danger" onClick={
                                             () => {
                                                 RemoveAlbum(albumInfo.id);
                                                 setAlbuns(undefined);
@@ -223,7 +249,13 @@ const Home: React.FunctionComponent = () => {
                                         </Button>
                                     </Col>
                                     <Col>
-                                        <Button variant="danger">
+                                        <Button variant="danger"
+                                            onClick={
+                                                () => {
+                                                    handleShowModalFixDiscogs();
+                                                }
+                                            }
+                                        >
                                             Fix Dicogs
                                         </Button>
                                     </Col>
@@ -255,7 +287,7 @@ const Home: React.FunctionComponent = () => {
                                                         {item.duration}
                                                     </Badge>
                                                 </ListGroup.Item>
-                                            )): ''}
+                                            )) : ''}
                                         </ListGroup>
                                     </Col>
                                 </Row>
@@ -288,7 +320,9 @@ const Home: React.FunctionComponent = () => {
                             <Select options={Artists()}
                                 onChange={
                                     (e) => e ? handleInputChange('artist', e?.value) : ''
-                                } />
+                                }
+                                defaultValue={artist}
+                            />
                         </Form.Group>
                         <Form.Group className="mb-3" controlId="editForm.ControlInput3">
                             <Form.Label>Ano</Form.Label>
@@ -324,9 +358,9 @@ const Home: React.FunctionComponent = () => {
                         <Form.Group className="mb-3" controlId="editForm.ControlInput6">
                             <Form.Label>Mídia</Form.Label>
                             <Form.Select required aria-label="Default select example"
-                            onChange={
-                                (e) => handleInputChange('media', e.target.value)
-                            }
+                                onChange={
+                                    (e) => handleInputChange('media', e.target.value)
+                                }
                             >
                                 <option>CD</option>
                                 <option>COMPACTO</option>
@@ -406,6 +440,32 @@ const Home: React.FunctionComponent = () => {
                             Fechar
                         </Button>
                         <Button type="submit">Submit form</Button>
+                    </Modal.Footer>
+                </Form>
+            </Modal>
+            <Modal show={showModalFixDiscogs} onHide={handleShowModalFixDiscogs}>
+                <Form validated={validatedFixDiscogs} onSubmit={handleSubmitFixDiscogs}>
+                    <Modal.Header closeButton>
+                        <Modal.Title>Fix Discogs</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        <Form.Group className="mb-3" controlId="fixDiscogs.ControlInput1">
+                            <Form.Label>Entre com Codigo de identificação [r...]</Form.Label>
+                            <Form.Control
+                                type="text"
+                                onChange={
+                                    (e) => setFixDiscogs(e.target.value)
+                                }
+                            />
+                        </Form.Group>
+                    </Modal.Body>
+                    <Modal.Footer>
+                        <Button variant="secondary" onClick={handleCloseModalFixDiscogs}>
+                            Fechar
+                        </Button>
+                        <Button variant="primary" type="submit">
+                            Salvar
+                        </Button>
                     </Modal.Footer>
                 </Form>
             </Modal>
