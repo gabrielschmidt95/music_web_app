@@ -1,6 +1,7 @@
 import AlbumData from '../models/Album';
 import Token from './Token';
 import GetDiscogs from './Discogs';
+import FetchSpotify from '../services/Spotify';
 
 let token = sessionStorage.getItem("token")
 
@@ -29,7 +30,9 @@ async function FetchAlbums(artist: string): Promise<AlbumData[]> {
 
 
 async function HandleAlbum(album : AlbumData) {
+    album.spotify = await FetchSpotify(album.artist, album.title);
     album.discogs = await GetDiscogs(album);
+
     if (token === null) {
         await Token();
         token = sessionStorage.getItem("token");
@@ -43,7 +46,7 @@ async function HandleAlbum(album : AlbumData) {
         body: JSON.stringify(album)
     };
     let response = await fetch(`https://${process.env.REACT_APP_API_DOMAIN}/new/album`, requestOptions);
-    console.log(response.text());
+    console.log(await response.text());
     if (response.status === 401) {
         await Token();
         token = sessionStorage.getItem("token");
@@ -67,7 +70,7 @@ async function RemoveAlbum(id : string) {
         body: JSON.stringify({id: id})
     };
     let response = await fetch(`https://${process.env.REACT_APP_API_DOMAIN}/delete/album`, requestOptions);
-    console.log(response.text());
+    console.log(await response.text());
     if (response.status === 401) {
         await Token();
         token = sessionStorage.getItem("token");
