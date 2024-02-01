@@ -1,17 +1,6 @@
 import React, { useState } from 'react'
 import Select from 'react-select'
-
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
-import Container from 'react-bootstrap/Container';
-import Card from 'react-bootstrap/Card'
-import ListGroup from 'react-bootstrap/ListGroup'
-import Badge from 'react-bootstrap/Badge'
-import Button from 'react-bootstrap/Button'
-import Modal from 'react-bootstrap/Modal';
-import Form from 'react-bootstrap/Form';
-import Alert from 'react-bootstrap/Alert';
-import Image from 'react-bootstrap/Image';
+import { Row, Col, Container, Card, ListGroup, Badge, Button, Modal, Form, Alert, Image } from 'react-bootstrap';
 
 import AlbumData from '../models/Album'
 import Artists from '../services/Artists'
@@ -30,6 +19,10 @@ const Home: React.FunctionComponent = () => {
     const [showModalFixDiscogs, setShowModalFixDiscogs] = useState(false);
     const handleCloseModalFixDiscogs = () => setShowModalFixDiscogs(false);
     const handleShowModalFixDiscogs = () => setShowModalFixDiscogs(true);
+
+    const [showModalDelete, setShowModalDelete] = useState(false);
+    const handleCloseModalDelete = () => setShowModalDelete(false);
+    const handleShowModalDelete = () => setShowModalDelete(true);
 
     const [showAlert, setShowAlert] = useState(false);
 
@@ -239,10 +232,7 @@ const Home: React.FunctionComponent = () => {
                                     <Col>
                                         <Button variant="danger" onClick={
                                             () => {
-                                                RemoveAlbum(albumInfo.id);
-                                                setAlbuns(undefined);
-                                                setAlbumInfo(undefined);
-                                                setArtist({ value: '', label: '' });
+                                                handleShowModalDelete();
                                             }
                                         }>
                                             Deletar
@@ -432,18 +422,11 @@ const Home: React.FunctionComponent = () => {
 
                     </Modal.Body>
                     <Modal.Footer>
-                        <Button variant="secondary" onClick={
-                            () => {
-                                handleCloseModal();
-                            }
-                        }>
-                            Fechar
-                        </Button>
-                        <Button type="submit">Submit form</Button>
+                        <Button type="submit">Salvar</Button>
                     </Modal.Footer>
                 </Form>
             </Modal>
-            <Modal show={showModalFixDiscogs} onHide={handleShowModalFixDiscogs}>
+            <Modal show={showModalFixDiscogs} onHide={handleCloseModalFixDiscogs}>
                 <Form validated={validatedFixDiscogs} onSubmit={handleSubmitFixDiscogs}>
                     <Modal.Header closeButton>
                         <Modal.Title>Fix Discogs</Modal.Title>
@@ -460,14 +443,31 @@ const Home: React.FunctionComponent = () => {
                         </Form.Group>
                     </Modal.Body>
                     <Modal.Footer>
-                        <Button variant="secondary" onClick={handleCloseModalFixDiscogs}>
-                            Fechar
-                        </Button>
                         <Button variant="primary" type="submit">
                             Salvar
                         </Button>
                     </Modal.Footer>
                 </Form>
+            </Modal>
+            <Modal show={showModalDelete} onHide={handleCloseModalDelete}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Deletar Album</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <p>Tem certeza que deseja deletar o album {albumInfo?.title} de {albumInfo?.artist}?</p>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="danger" onClick={
+                        () => {
+                            if (albumInfo)
+                                RemoveAlbum(albumInfo.id);
+                            setAlbuns(undefined);
+                            setAlbumInfo(undefined);
+                            setArtist({ value: '', label: '' });
+                            handleCloseModalDelete();
+                        }
+                    }>Deletar</Button>
+                </Modal.Footer>
             </Modal>
         </>
 
