@@ -1,7 +1,7 @@
 interface Totals {
-    buy: Map<string, number>,
-    media: Map<string, number>,
-    year: Map<string, number>
+    buy: Record<string, number> ,
+    media: Record<string, number>,
+    year: Record<string, number>
 }
 
 export default Totals;

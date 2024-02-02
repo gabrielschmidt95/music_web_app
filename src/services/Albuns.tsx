@@ -1,6 +1,6 @@
 import AlbumData from '../models/Album';
 import Token from './Token';
-import {GetDiscogs,GetById} from './Discogs';
+import { GetDiscogs, GetById } from './Discogs';
 import FetchSpotify from '../services/Spotify';
 
 let token = sessionStorage.getItem("token")
@@ -10,6 +10,7 @@ async function FetchAlbums(artist: string): Promise<AlbumData[]> {
         await Token();
         token = sessionStorage.getItem("token");
     }
+    const url = `https://${process.env.REACT_APP_API_DOMAIN}/album/artist`
     const requestOptions = {
         method: 'POST',
         headers: {
@@ -18,11 +19,11 @@ async function FetchAlbums(artist: string): Promise<AlbumData[]> {
         },
         body: JSON.stringify({ artist: artist })
     };
-    let response = await fetch(`https://${process.env.REACT_APP_API_DOMAIN}/album/artist`, requestOptions);
+    let response = await fetch(url, requestOptions);
     if (response.status === 401) {
         await Token();
         token = sessionStorage.getItem("token");
-        response = await fetch(`https://${process.env.REACT_APP_API_DOMAIN}/album/artist`, requestOptions);
+        response = await fetch(url, requestOptions);
     }
     const data = await response.json() as AlbumData[];
     if (data === null) {
@@ -59,7 +60,7 @@ async function HandleAlbum(album: AlbumData) {
         console.log("Discogs", album);
         album.discogs = await GetDiscogs(album);
     }
-    
+
     if (token === null) {
         await Token();
         token = sessionStorage.getItem("token");
@@ -88,6 +89,7 @@ async function RemoveAlbum(id: string) {
         await Token();
         token = sessionStorage.getItem("token");
     }
+    const uri = `https://${process.env.REACT_APP_API_DOMAIN}/delete/album`
     const requestOptions = {
         method: 'POST',
         headers: {
@@ -96,12 +98,12 @@ async function RemoveAlbum(id: string) {
         },
         body: JSON.stringify({ id: id })
     };
-    let response = await fetch(`https://${process.env.REACT_APP_API_DOMAIN}/delete/album`, requestOptions);
+    let response = await fetch(uri, requestOptions);
     console.log(await response.text());
     if (response.status === 401) {
         await Token();
         token = sessionStorage.getItem("token");
-        await fetch(`https://${process.env.REACT_APP_API_DOMAIN}/new/album`, requestOptions);
+        await fetch(uri, requestOptions);
     }
 
 }
@@ -112,9 +114,48 @@ async function UpdateDiscogs(discogsId: string, album: AlbumData) {
     await HandleAlbum(album);
 }
 
+async function FetchAlbumsByYearMetric(year: number, metric: string): Promise<Record<string, string>[]> {
+    console.log(JSON.stringify({ year: year, metric: metric }));
+    if (token === null) {
+        await Token();
+        token = sessionStorage.getItem("token");
+    }
+    const url = `https://${process.env.REACT_APP_API_DOMAIN}/album/year`
+    const requestOptions = {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + token
+        },
+        body: JSON.stringify({ year: year, metric: metric })
+    };
+    let response = await fetch(url, requestOptions);
+    if (response.status === 401) {
+        await Token();
+        token = sessionStorage.getItem("token");
+        response = await fetch(url, requestOptions);
+    }
+    const data = await response.json() as Record<string, string>[];
+    if (data === null) {
+        return [];
+    }
+    data.sort((a, b) => {
+        if (a.purchase < b.purchase) {
+            return -1;
+        }
+        if (a.purchase > b.purchase) {
+            return 1;
+        }
+        return 0;
+    });
+
+    return data;
+}
+
 export {
     FetchAlbums,
     HandleAlbum,
     RemoveAlbum,
-    UpdateDiscogs
+    UpdateDiscogs,
+    FetchAlbumsByYearMetric
 }

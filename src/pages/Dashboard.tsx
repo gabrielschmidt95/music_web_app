@@ -2,7 +2,8 @@ import React, { useState } from 'react'
 import Totals from '../services/Totals'
 
 import TotalsData from '../models/Totals';
-import { Col, Row, Container } from "react-bootstrap";
+import { Col, Row, Container, Table, Modal } from "react-bootstrap";
+import { FetchAlbumsByYearMetric } from '../services/Albuns';
 
 import {
     Chart as ChartJS,
@@ -12,13 +13,11 @@ import {
     Title,
     Tooltip,
     Legend,
-    ArcElement
 } from 'chart.js';
 
-import { Bar, Pie } from 'react-chartjs-2';
+import { Bar } from 'react-chartjs-2';
 
 ChartJS.register(
-    ArcElement,
     CategoryScale,
     LinearScale,
     BarElement,
@@ -27,18 +26,15 @@ ChartJS.register(
     Legend
 );
 
-export const options = {
-    responsive: true,
-    plugins: {
-        legend: {
-            position: 'top' as const,
-        },
-    },
-};
-
-
 const Dashboard: React.FunctionComponent = () => {
     const [totals, setTotals] = useState<TotalsData>()
+
+    const [showModal, setShowModal] = useState(false);
+    const handleCloseModal = () => setShowModal(false);
+    const handleShowModal = () => setShowModal(true);
+
+    const [modalValue, setModalValue] = useState<Record<string, string>[]>()
+    const [modalYear, setModalYear] = useState<number>()
 
     if (totals === undefined) {
         Totals().then((data) => {
@@ -69,58 +65,125 @@ const Dashboard: React.FunctionComponent = () => {
         ],
     };
 
-    const pieDataLabels = Object.keys(totals ? totals.media : "")
-    const pieData = {
-        labels: pieDataLabels,
-        datasets: [
-            {
-                label: 'Totais',
-                data: Object.values(totals ? totals.media : ""),
-                backgroundColor: [
-                    'rgba(255, 99, 132, 0.2)',
-                    'rgba(54, 162, 235, 0.2)',
-                    'rgba(255, 206, 86, 0.2)',
-                    'rgba(75, 192, 192, 0.2)',
-                    'rgba(153, 102, 255, 0.2)',
-                ],
-                borderColor: [
-                    'rgba(255, 99, 132, 1)',
-                    'rgba(54, 162, 235, 1)',
-                    'rgba(255, 206, 86, 1)',
-                    'rgba(75, 192, 192, 1)',
-                    'rgba(153, 102, 255, 1)',
-                ],
-                borderWidth: 1,
-            },
-        ],
-    };
-    return <Container fluid style={
-        {
-            padding: '3rem',
-            height: '100vh',
-            overflowY: 'auto',
-        }
-    }>
-        <Row>
-            <Col>
-                <Pie data={pieData} options={
-                    {
-                        responsive: true,
-                        plugins: {
-                            legend: {
-                                position: 'top' as const,
+    return (
+        <>
+            <Container fluid style={
+                {
+                    padding: '2rem',
+                    height: '100vh',
+                    overflowY: 'auto',
+                }
+            }>
+                <Row>
+                    <Col>
+                        <h1>Dashboard</h1>
+                    </Col>
+                </Row>
+                <Row>
+                    <Col xs={5}>
+                        <Table>
+                            <thead>
+                                <tr>
+                                    <th>Media</th>
+                                    <th>Quantidade</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {
+                                    totals ? Object.keys(totals.media).map(key => {
+                                        return <tr key={key}>
+                                            <td>{key}</td>
+                                            <td>{totals.media[key]}</td>
+                                        </tr>
+                                    }) : <></>
+                                }
+                            </tbody>
+                        </Table>
+                    </Col>
+                </Row>
+                <Row>
+                    <Col>
+                        <h2>Compras por Ano</h2>
+                        <Bar data={purchaseByYear} options={{
+                            responsive: true,
+                            plugins: {
+                                legend: {
+                                    position: 'top' as const,
+                                },
                             },
-                        },
-                    }
-                
-                }/>
-            </Col>
-            <Col>
-                <Bar data={purchaseByYear} options={options} />
-                <Bar data={releaseByYear} options={options} />
-            </Col>
-        </Row>
-    </Container>
+                            onClick: (evt: any, item: any) => {
+                                if (item[0] !== undefined) {
+                                    const year = Object.keys(purchaseByYear.datasets[0].data!)[item[0].index]
+                                    FetchAlbumsByYearMetric(parseInt(year), "purchase").then((data) => {
+                                        setModalYear(parseInt(year))
+                                        setModalValue(data)
+                                        handleShowModal()
+                                    })
+
+                                }
+                            }
+                        }} />
+                    </Col>
+                </Row>
+                <Row>
+                    <Col>
+                        <h2>Lançamentos por Ano</h2>
+                        <Bar data={releaseByYear} options={
+                            {
+                                responsive: true,
+                                plugins: {
+                                    legend: {
+                                        position: 'top' as const,
+                                    },
+                                },
+                                onClick: (evt: any, item: any) => {
+                                    if (item[0] !== undefined) {
+                                        const year = Object.keys(releaseByYear.datasets[0].data!)[item[0].index]
+                                        FetchAlbumsByYearMetric(parseInt(year), "release_year").then((data) => {
+                                            setModalYear(parseInt(year))
+                                            setModalValue(data)
+                                            handleShowModal()
+                                        })
+
+                                    }
+                                }
+                            }
+                        } />
+                    </Col>
+                </Row>
+            </Container>
+            <Modal show={showModal} onHide={handleCloseModal} size="xl" >
+                <Modal.Header closeButton>
+                    <Modal.Title>{modalYear}</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <Table>
+                        <thead>
+                            <tr>
+                                <th>Artista</th>
+                                <th>Album</th>
+                                <th>Media</th>
+                                <th>Data de Compra</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {
+                                modalValue? 
+                                modalValue.map((album, _) => {
+                                    return <tr key={album.title}>
+                                        <td>{album.artist}</td>
+                                        <td>{album.title}</td>
+                                        <td>{album.media}</td>
+                                        <td>{album.purchase ? album.purchase.split("-")[2] + "/" + album.purchase.split("-")[1]+"/" +album.purchase.split("-")[0]: ""}</td>
+                                    </tr>
+                                }) : <></>
+                            }
+                        </tbody>
+                    </Table>
+                </Modal.Body>
+            </Modal>
+        </>
+    )
 }
 
 export default Dashboard
