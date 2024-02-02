@@ -17,7 +17,7 @@ const Home: React.FunctionComponent = () => {
     const handleShowModal = () => setShowModal(true);
 
     const [newArtist, setNewArtist] = useState(false);
-
+    const [setFieldsNA, setSetFieldsNA] = useState(false);
 
     const [showModalFixDiscogs, setShowModalFixDiscogs] = useState(false);
     const handleCloseModalFixDiscogs = () => setShowModalFixDiscogs(false);
@@ -54,6 +54,7 @@ const Home: React.FunctionComponent = () => {
         setAlbuns(undefined);
         setAlbumInfo(undefined);
         setArtist({ value: '', label: '' });
+        setSetFieldsNA(false);
     }
 
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
@@ -421,7 +422,12 @@ const Home: React.FunctionComponent = () => {
                             <Form.Label>Mídia</Form.Label>
                             <Form.Select required aria-label="Default select example"
                                 onChange={
-                                    (e) => handleInputChange('media', e.target.value)
+                                    (e) => {
+                                        handleInputChange('media', e.target.value)
+                                        if (e.target.value.startsWith('VINIL')) {
+                                            setSetFieldsNA(true);
+                                        }
+                                    }
                                 }
                             >
                                 <option>CD</option>
@@ -445,7 +451,7 @@ const Home: React.FunctionComponent = () => {
                             <Form.Label>IFPI Mastering</Form.Label>
                             <Form.Control
                                 type="text"
-                                defaultValue={albumInfo?.ifpiMastering}
+                                defaultValue={setFieldsNA ? "NA" :albumInfo?.ifpiMastering}
                                 onChange={
                                     (e) => handleInputChange('ifpiMastering', e.target.value)
                                 }
@@ -455,7 +461,7 @@ const Home: React.FunctionComponent = () => {
                             <Form.Label>IFPI Mould</Form.Label>
                             <Form.Control
                                 type="text"
-                                defaultValue={albumInfo?.ifpiMould}
+                                defaultValue={setFieldsNA ? "NA" :albumInfo?.ifpiMould}
                                 onChange={
                                     (e) => handleInputChange('ifpiMould', e.target.value)
                                 }
@@ -485,7 +491,7 @@ const Home: React.FunctionComponent = () => {
                             <Form.Label>Lote</Form.Label>
                             <Form.Control
                                 type="text"
-                                defaultValue={albumInfo?.lote}
+                                defaultValue={setFieldsNA ? "NA" :albumInfo?.lote}
                                 onChange={
                                     (e) => handleInputChange('lote', e.target.value)
                                 }
