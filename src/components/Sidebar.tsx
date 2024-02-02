@@ -51,7 +51,6 @@ const MenuItemLinks = styled(Link)`
 `
 
 const Home: React.FunctionComponent = () => {
-    console.log(JSON.parse(localStorage.getItem('user') ?? '{}'));
     return (
         <>
             <SidebarMenu>
@@ -59,7 +58,16 @@ const Home: React.FunctionComponent = () => {
                 {SidebarData.map((item) => {
                     return (
                         <MenuItems key={item.title}>
-                            <MenuItemLinks to={item.path}>
+                            <MenuItemLinks to={item.path} onClick={
+                                () => {
+                                    console.log(sessionStorage.getItem('currentPage'));
+                                    if (sessionStorage.getItem('currentPage') === item.path) {
+                                        window.location.reload();
+                                    }   
+                                    sessionStorage.setItem('currentPage', item.path);
+                                }
+
+                            }>
                                 {item.icon}
                                 <span style={{ marginLeft: '16px' }}>{item.title}</span>
                             </MenuItemLinks>

@@ -4,6 +4,7 @@ import './index.css';
 import Main from './Main';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { BrowserRouter } from "react-router-dom";
+import { createRoot } from "react-dom/client";
 
 import Sidebar from './components/Sidebar';
 import Row from 'react-bootstrap/Row';
@@ -31,7 +32,10 @@ async function signInWithGoogle() {
 }
 
 function App() {
-  ReactDOM.render(
+  const rootElement = document.getElementById("root");
+  const root = createRoot(rootElement as HTMLElement);
+
+  root.render(
     <React.StrictMode>
       <BrowserRouter>
         <Container fluid style={{ paddingLeft: '0', backgroundColor: '#f8f9fa', height: '100vh', position: 'fixed' }}>
@@ -46,8 +50,7 @@ function App() {
         </Container>
       </BrowserRouter>
     </React.StrictMode >,
-    document.getElementById('root')
-  )
+  );
 }
 
 if (!localStorage.getItem('user')) {

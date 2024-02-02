@@ -58,6 +58,7 @@ const Home: React.FunctionComponent = () => {
 
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         const form = event.currentTarget;
+
         if (form.checkValidity() === false) {
             event.preventDefault();
             event.stopPropagation();
@@ -65,9 +66,9 @@ const Home: React.FunctionComponent = () => {
         }
         event.preventDefault();
         setValidated(true);
-
-        if (formValues.artist === '') {
-            if (artist !== undefined && artist.value === '') {
+        console.log(artist);
+        if (formValues.artist === '' || formValues.artist === undefined || formValues.artist === null) {
+            if (artist !== undefined && artist.value !== '') {
                 formValues.artist = artist.value;
             } else {
                 event.preventDefault();
@@ -75,6 +76,7 @@ const Home: React.FunctionComponent = () => {
                 return;
             }
         }
+
         HandleAlbum(formValues as AlbumData).then((data) => {
             clearContent();
             handleCloseModal();
@@ -241,7 +243,11 @@ const Home: React.FunctionComponent = () => {
                                     <Col>
                                         <Button variant="dark" onClick={
                                             () => {
-                                                window.open(albumInfo.discogs.uri, '_blank')
+                                                if (albumInfo.discogs.uri.startsWith('https://www.discogs.com/')){
+                                                    window.open(albumInfo.discogs.uri, '_blank')
+                                                }else{
+                                                    window.open('https://www.discogs.com/release/'+albumInfo.discogs.id, '_blank')
+                                                }
                                             }
 
                                         }
@@ -342,14 +348,13 @@ const Home: React.FunctionComponent = () => {
                                         display: newArtist ? 'block' : 'none'
                                     }
                                 }
-                                required
                                 placeholder='Novo Artista'
                                 type="text"
                                 onChange={
                                     (e) => handleInputChange('artist', e.target.value.toUpperCase())
                                 }
                             />
-                            <Form.Select required aria-label="Default select example"
+                            <Form.Select aria-label="Default select example"
                                 style={
                                     {
                                         display: newArtist ? 'none' : 'block'

@@ -33,8 +33,7 @@ async function GetDiscogs(album: AlbumData) {
         "token": tokenDiscogs,
         "artist": album.artist,
         "release_title": album.title,
-        "barcode": album.barcode,
-        "year": album.releaseYear.toString()
+        "barcode": album.barcode
     };
     const response = await fetchDiscogs(queryParameters);
 
@@ -63,6 +62,9 @@ async function GetDiscogs(album: AlbumData) {
 
         let discogsData = data[0] as DiscogsData;
         console.log(data);
+        if (discogsData === undefined) {
+            return {} as DiscogsData;
+        }
         discogsData.len = data.length;
         let urlsList: [{ id: number, uri: string }] = [] as any;
         for (const item of data) {

@@ -24,13 +24,26 @@ async function FetchAlbums(artist: string): Promise<AlbumData[]> {
         token = sessionStorage.getItem("token");
         response = await fetch(`https://${process.env.REACT_APP_API_DOMAIN}/album/artist`, requestOptions);
     }
-
-    return await response.json() as AlbumData[];
+    const data = await response.json() as AlbumData[];
+    if (data === null) {
+        return [];
+    }
+    data.sort((a, b) => {
+        if (a.releaseYear < b.releaseYear) {
+            return -1;
+        }
+        if (a.releaseYear > b.releaseYear) {
+            return 1;
+        }
+        return 0;
+    });
+    return data;
 }
 
 
 async function HandleAlbum(album: AlbumData) {
     let uri = "";
+    console.log(album);
     if (album.id === undefined || album.id === "") {
         uri = `https://${process.env.REACT_APP_API_DOMAIN}/new/album`;
     }
@@ -42,7 +55,7 @@ async function HandleAlbum(album: AlbumData) {
         album.spotify = await FetchSpotify(album.artist, album.title);
     }
 
-    if (album.discogs === null) {
+    if (album.discogs === undefined || album.discogs === null || album.discogs.id === 0) {
         console.log("Discogs", album);
         album.discogs = await GetDiscogs(album);
     }
@@ -95,6 +108,7 @@ async function RemoveAlbum(id: string) {
 
 async function UpdateDiscogs(discogsId: string, album: AlbumData) {
     album.discogs = await GetById(discogsId);
+    console.log(album);
     await HandleAlbum(album);
 }
 
