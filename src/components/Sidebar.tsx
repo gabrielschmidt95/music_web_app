@@ -60,7 +60,6 @@ const Home: React.FunctionComponent = () => {
                         <MenuItems key={item.title}>
                             <MenuItemLinks to={item.path} onClick={
                                 () => {
-                                    console.log(sessionStorage.getItem('currentPage'));
                                     if (sessionStorage.getItem('currentPage') === item.path) {
                                         window.location.reload();
                                     }   
