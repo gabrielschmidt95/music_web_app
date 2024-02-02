@@ -67,7 +67,7 @@ const Home: React.FunctionComponent = () => {
         }
         event.preventDefault();
         setValidated(true);
-        console.log(artist);
+        
         if (formValues.artist === '' || formValues.artist === undefined || formValues.artist === null) {
             if (artist !== undefined && artist.value !== '') {
                 formValues.artist = artist.value;
@@ -76,8 +76,8 @@ const Home: React.FunctionComponent = () => {
                 event.stopPropagation();
                 return;
             }
-        }
-
+        }   
+        console.log(formValues)
         HandleAlbum(formValues as AlbumData).then((data) => {
             clearContent();
             handleCloseModal();
@@ -144,8 +144,22 @@ const Home: React.FunctionComponent = () => {
                         <Button variant="success" onClick={
                             () => {
                                 setAlbumInfo(undefined);
-                                handleShowModal();
+                                setFormValues({
+                                    title: '',
+                                    artist: '',
+                                    releaseYear: 0,
+                                    origin: '',
+                                    purchase: '',
+                                    media: 'CD',
+                                    editionYear: 0,
+                                    ifpiMastering: '',
+                                    ifpiMould: '',
+                                    barcode: '',
+                                    matriz: '',
+                                    lote: ''
+                                });
                                 setModalType('Adicionar Album')
+                                handleShowModal();
                             }
                         }>Adicionar Album</Button>
                     </Col>
@@ -176,7 +190,6 @@ const Home: React.FunctionComponent = () => {
                                             key={item.id}
                                             onClick={
                                                     () => {
-                                                        console.log(item.id)
                                                         setAlbumInfo(item)
                                                         setFormValues(item)
                                                     }

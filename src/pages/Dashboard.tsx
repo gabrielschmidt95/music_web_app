@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import Totals from '../services/Totals'
 
 import TotalsData from '../models/Totals';
-import { Col, Row, Container, Table, Modal } from "react-bootstrap";
+import { Col, Row, Container, Table, Modal, Spinner } from "react-bootstrap";
 import { FetchAlbumsByYearMetric } from '../services/Albuns';
 
 import {
@@ -104,7 +104,7 @@ const Dashboard: React.FunctionComponent = () => {
                                                 <td>{key}</td>
                                                 <td>{totals.media[key]}</td>
                                             </tr>
-                                        }) : <></>
+                                        }) : <Spinner animation="border" />
                                     }
                                 </tbody>
                             </Table>
@@ -140,7 +140,7 @@ const Dashboard: React.FunctionComponent = () => {
                                 }
                             }} />
                         </Col>
-     
+
                         <Col
                             style={
                                 {
