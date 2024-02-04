@@ -47,7 +47,8 @@ const Home: React.FunctionComponent = () => {
         ifpiMould: '',
         barcode: '',
         matriz: '',
-        lote: ''
+        lote: '',
+        obs: ''
     });
 
     function clearContent() {
@@ -156,7 +157,8 @@ const Home: React.FunctionComponent = () => {
                                     ifpiMould: '',
                                     barcode: '',
                                     matriz: '',
-                                    lote: ''
+                                    lote: '',
+                                    obs: ''
                                 });
                                 setModalType('Adicionar Album')
                                 handleShowModal();
@@ -238,6 +240,7 @@ const Home: React.FunctionComponent = () => {
                                             <ListGroup.Item>Barcode: {albumInfo.barcode}</ListGroup.Item>
                                             <ListGroup.Item>Matriz: {albumInfo.matriz}</ListGroup.Item>
                                             <ListGroup.Item>Lote: {albumInfo.lote}</ListGroup.Item>
+                                            <ListGroup.Item>Observação: {albumInfo.obs}</ListGroup.Item>
                                         </ListGroup>
                                     </Col>
                                 </Row>
@@ -439,9 +442,12 @@ const Home: React.FunctionComponent = () => {
                                         handleInputChange('media', e.target.value)
                                         if (e.target.value.startsWith('VINIL')) {
                                             setSetFieldsNA(true);
+                                        }else{
+                                            setSetFieldsNA(false);
                                         }
                                     }
                                 }
+                                defaultValue={albumInfo?.media}
                             >
                                 <option>CD</option>
                                 <option>COMPACTO</option>
@@ -493,7 +499,7 @@ const Home: React.FunctionComponent = () => {
                         <Form.Group className="mb-3" controlId="editForm.ControlInput11">
                             <Form.Label>Matriz</Form.Label>
                             <Form.Control
-                                type="text"
+                                as="textarea"
                                 defaultValue={albumInfo?.matriz}
                                 onChange={
                                     (e) => handleInputChange('matriz', e.target.value)
@@ -507,6 +513,16 @@ const Home: React.FunctionComponent = () => {
                                 defaultValue={setFieldsNA ? "NA" :albumInfo?.lote}
                                 onChange={
                                     (e) => handleInputChange('lote', e.target.value)
+                                }
+                            />
+                        </Form.Group>
+                        <Form.Group className="mb-3" controlId="editForm.ControlInput12">
+                            <Form.Label>Observação</Form.Label>
+                            <Form.Control
+                                type="text"
+                                defaultValue={setFieldsNA ? "NA" :albumInfo?.obs}
+                                onChange={
+                                    (e) => handleInputChange('obs', e.target.value)
                                 }
                             />
                         </Form.Group>

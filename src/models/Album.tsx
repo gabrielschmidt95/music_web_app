@@ -14,6 +14,7 @@ interface AlbumData {
     barcode: string,
     matriz: string,
     lote: string,
+    obs: string,
     discogs: Discogs,
     spotify: {
         album_type: string,
