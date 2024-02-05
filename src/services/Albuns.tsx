@@ -139,6 +139,7 @@ async function FetchAlbumsByYearMetric(year: number, metric: string): Promise<Re
     if (data === null) {
         return [];
     }
+    if(metric === "purchase") {
     data.sort((a, b) => {
         if (a.purchase < b.purchase) {
             return -1;
@@ -148,6 +149,17 @@ async function FetchAlbumsByYearMetric(year: number, metric: string): Promise<Re
         }
         return 0;
     });
+    } else {
+        data.sort((a, b) => {
+            if (a.artist < b.artist) {
+                return -1;
+            }
+            if (a.artist > b.artist) {
+                return 1;
+            }
+            return 0;
+        });
+    }
 
     return data;
 }
