@@ -5,18 +5,22 @@ import FetchSpotify from '../services/Spotify';
 
 let token = sessionStorage.getItem("token")
 
-async function FetchAlbums(artist: string): Promise<AlbumData[]> {
+async function getHeader(): Promise<Record<string, string>> {
     if (token === null) {
         await Token();
         token = sessionStorage.getItem("token");
     }
+    return {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + token
+    };
+}
+
+async function FetchAlbums(artist: string): Promise<AlbumData[]> {
     const url = `https://${process.env.REACT_APP_API_DOMAIN}/album/artist`
     const requestOptions = {
         method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + token
-        },
+        headers: await getHeader(),
         body: JSON.stringify({ artist: artist })
     };
     let response = await fetch(url, requestOptions);
@@ -61,16 +65,9 @@ async function HandleAlbum(album: AlbumData) {
         album.discogs = await GetDiscogs(album);
     }
 
-    if (token === null) {
-        await Token();
-        token = sessionStorage.getItem("token");
-    }
     const requestOptions = {
         method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + token
-        },
+        headers: await getHeader(),
         body: JSON.stringify(album)
     };
     let response = await fetch(uri, requestOptions);
@@ -85,17 +82,10 @@ async function HandleAlbum(album: AlbumData) {
 
 async function RemoveAlbum(id: string) {
     console.log(id);
-    if (token === null) {
-        await Token();
-        token = sessionStorage.getItem("token");
-    }
     const uri = `https://${process.env.REACT_APP_API_DOMAIN}/delete/album`
     const requestOptions = {
         method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + token
-        },
+        headers: await getHeader(),
         body: JSON.stringify({ id: id })
     };
     let response = await fetch(uri, requestOptions);
@@ -114,31 +104,7 @@ async function UpdateDiscogs(discogsId: string, album: AlbumData) {
     await HandleAlbum(album);
 }
 
-async function FetchAlbumsByYearMetric(year: number, metric: string): Promise<Record<string, string>[]> {
-    console.log(JSON.stringify({ year: year, metric: metric }));
-    if (token === null) {
-        await Token();
-        token = sessionStorage.getItem("token");
-    }
-    const url = `https://${process.env.REACT_APP_API_DOMAIN}/album/year`
-    const requestOptions = {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + token
-        },
-        body: JSON.stringify({ year: year, metric: metric })
-    };
-    let response = await fetch(url, requestOptions);
-    if (response.status === 401) {
-        await Token();
-        token = sessionStorage.getItem("token");
-        response = await fetch(url, requestOptions);
-    }
-    const data = await response.json() as Record<string, string>[];
-    if (data === null) {
-        return [];
-    }
+function sortYearData(data: Record<string, string>[], metric: string): Record<string, string>[] {
     if (metric === "purchase") {
         data.sort((a, b) => {
             if (a.purchase < b.purchase) {
@@ -160,22 +126,35 @@ async function FetchAlbumsByYearMetric(year: number, metric: string): Promise<Re
             return 0;
         });
     }
-
     return data;
 }
 
-async function Aggregate(qyery: object): Promise<Record<string, number | string>[]> {
-    if (token === null) {
+async function FetchAlbumsByYearMetric(year: number, metric: string): Promise<Record<string, string>[]> {
+    console.log(JSON.stringify({ year: year, metric: metric }));
+    const url = `https://${process.env.REACT_APP_API_DOMAIN}/album/year`
+    const requestOptions = {
+        method: 'POST',
+        headers: await getHeader(),
+        body: JSON.stringify({ year: year, metric: metric })
+    };
+    let response = await fetch(url, requestOptions);
+    if (response.status === 401) {
         await Token();
         token = sessionStorage.getItem("token");
+        response = await fetch(url, requestOptions);
     }
+    const data = await response.json() as Record<string, string>[];
+    if (data === null) {
+        return [];
+    }
+    return sortYearData(data, metric);
+}
+
+async function Aggregate(qyery: object): Promise<Record<string, number | string>[]> {
     const url = `https://${process.env.REACT_APP_API_DOMAIN}/aggregation`
     const requestOptions = {
         method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + token
-        },
+        headers: await getHeader(),
         body: JSON.stringify(qyery)
     };
 
