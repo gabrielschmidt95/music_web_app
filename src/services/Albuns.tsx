@@ -139,16 +139,16 @@ async function FetchAlbumsByYearMetric(year: number, metric: string): Promise<Re
     if (data === null) {
         return [];
     }
-    if(metric === "purchase") {
-    data.sort((a, b) => {
-        if (a.purchase < b.purchase) {
-            return -1;
-        }
-        if (a.purchase > b.purchase) {
-            return 1;
-        }
-        return 0;
-    });
+    if (metric === "purchase") {
+        data.sort((a, b) => {
+            if (a.purchase < b.purchase) {
+                return -1;
+            }
+            if (a.purchase > b.purchase) {
+                return 1;
+            }
+            return 0;
+        });
     } else {
         data.sort((a, b) => {
             if (a.artist < b.artist) {
@@ -164,10 +164,39 @@ async function FetchAlbumsByYearMetric(year: number, metric: string): Promise<Re
     return data;
 }
 
+async function Aggregate(qyery: object): Promise<Record<string, number | string>[]> {
+    if (token === null) {
+        await Token();
+        token = sessionStorage.getItem("token");
+    }
+    const url = `https://${process.env.REACT_APP_API_DOMAIN}/aggregation`
+    const requestOptions = {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + token
+        },
+        body: JSON.stringify(qyery)
+    };
+
+    let response = await fetch(url, requestOptions);
+    if (response.status === 401) {
+        await Token();
+        token = sessionStorage.getItem("token");
+        response = await fetch(url, requestOptions);
+    }
+    const data = await response.json() as Record<string, number>[];
+    if (data === null) {
+        return [];
+    }
+    return data;
+}
+
 export {
     FetchAlbums,
     HandleAlbum,
     RemoveAlbum,
     UpdateDiscogs,
-    FetchAlbumsByYearMetric
+    FetchAlbumsByYearMetric,
+    Aggregate
 }

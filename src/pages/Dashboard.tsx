@@ -3,7 +3,7 @@ import Totals from '../services/Totals'
 
 import TotalsData from '../models/Totals';
 import { Col, Row, Container, Table, Modal, Spinner } from "react-bootstrap";
-import { FetchAlbumsByYearMetric } from '../services/Albuns';
+import { Aggregate, FetchAlbumsByYearMetric, FetchAlbums } from '../services/Albuns';
 
 import { FaRecordVinyl, FaCompactDisc } from "react-icons/fa";
 
@@ -30,6 +30,7 @@ ChartJS.register(
 
 const Dashboard: React.FunctionComponent = () => {
     const [totals, setTotals] = useState<TotalsData>()
+    const [top10Artists, setTop10Artists] = useState<Record<string, number | string>[]>()
 
     const [showModal, setShowModal] = useState(false);
     const handleCloseModal = () => setShowModal(false);
@@ -42,6 +43,29 @@ const Dashboard: React.FunctionComponent = () => {
         Totals().then((data) => {
             setTotals(data)
         })
+    }
+    if (top10Artists === undefined) {
+        const query = [
+            {
+                "$group": {
+                    "_id": "$ARTIST",
+                    "total": {
+                        "$sum": 1
+                    }
+                }
+            },
+            {
+                "$sort": {
+                    "total": -1
+                }
+            },
+            { "$limit": 20 }
+        ]
+
+        Aggregate(query).then((data) => {
+            setTop10Artists(data)
+        })
+
     }
     const purchaseByYearLabels = Object.keys(totals ? totals.buy : "")
     const purchaseByYear = {
@@ -66,6 +90,9 @@ const Dashboard: React.FunctionComponent = () => {
             }
         ],
     };
+
+    const top10ArtistsLabels = top10Artists ? top10Artists.map((artist, _) => artist._id as string) : []
+    const top10ArtistsData = top10Artists ? top10Artists.map((artist, _) => artist.total) : []
 
     return (
         <>
@@ -92,10 +119,11 @@ const Dashboard: React.FunctionComponent = () => {
                         }
                     >
                         <Col xs={5}>
+                            <h2>Quantitativo por Mídia</h2>
                             <Table>
                                 <thead>
                                     <tr>
-                                        <th>Media</th>
+                                        <th>Mídia</th>
                                         <th>Quantidade</th>
                                     </tr>
                                 </thead>
@@ -106,10 +134,52 @@ const Dashboard: React.FunctionComponent = () => {
                                                 <td>{key}</td>
                                                 <td>{totals.media[key]}</td>
                                             </tr>
-                                        }) : <Spinner animation="border" />
+                                        }) : <tr><td><Spinner animation="border" /></td></tr>
                                     }
                                 </tbody>
                             </Table>
+                        </Col>
+                        <Col xs={5}>
+                            <h2>Top 20 Albuns por Artista</h2>
+                            <Bar data={{
+                                labels: top10ArtistsLabels,
+                                datasets: [
+                                    {
+                                        label: 'Top 20',
+                                        data: top10ArtistsData,
+                                        backgroundColor: 'red',
+                                    }
+                                ],
+                            }} options={{
+                                responsive: true,
+                                plugins: {
+                                    legend: {
+                                        position: 'top' as const,
+                                    },
+                                },
+                                onClick: (evt: any, item: any) => {
+                                    if (item[0] !== undefined) {
+                                        const artist = top10ArtistsLabels[item[0].index]
+                                        console.log(artist)
+                                        FetchAlbums(artist).then((data) => {
+                                            //setModalYear(parseInt(year))
+                                            let albumData: Record<string, string>[] = []
+                                            data.map((album, _) => {
+                                                albumData.push({
+                                                    "title": album.title,
+                                                    "artist": album.artist,
+                                                    "media": album.media,
+                                                    "purchase": album.purchase ? album.purchase.split("T")[0] : "",
+                                                    "release": album.releaseYear.toString()
+                                                })
+                                            })
+                                            setModalValue(albumData)
+                                            handleShowModal()
+                                        })
+
+                                    }
+                                }
+                            }} />
                         </Col>
                     </Row>
                     <br />
@@ -208,16 +278,16 @@ const Dashboard: React.FunctionComponent = () => {
                             {
                                 modalValue ?
                                     modalValue.map((album, _) => {
-                                        return <tr key={album.title}>
+                                        return <tr key={album.title + album.purchase}>
                                             {
                                                 album.media.startsWith('VINIL') ? <td><FaRecordVinyl color='black' /></td> : <td><FaCompactDisc color='grey' /></td>
                                             }
                                             <td>{album.artist}</td>
-                                            <td>{album.title}</td>
+                                            <td>{album.release ? album.release + " - " + album.title: album.title}</td>
                                             <td>{album.media}</td>
                                             <td>{album.purchase ? album.purchase.split("-")[2] + "/" + album.purchase.split("-")[1] + "/" + album.purchase.split("-")[0] : ""}</td>
                                         </tr>
-                                    }) : <></>
+                                    }) : <tr><td><Spinner animation="border" /></td></tr>
                             }
                         </tbody>
                     </Table>
