@@ -1,5 +1,4 @@
 async function FetchToken(): Promise<boolean> {
-    console.log("Fetching token");
     const requestOptions = {
         method: 'POST',
         headers: {
@@ -13,7 +12,6 @@ async function FetchToken(): Promise<boolean> {
         }),
     };
     const response = await fetch(`https://${process.env.REACT_APP_OAUTH_DOMAIN}/oauth/token`, requestOptions);
-    console.log(response.status);
     const data = await response.json();
     sessionStorage.setItem("token", data.access_token);
 

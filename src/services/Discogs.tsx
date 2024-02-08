@@ -61,7 +61,6 @@ async function GetDiscogs(album: AlbumData) {
         }
 
         let discogsData = data[0] as DiscogsData;
-        console.log(data);
         if (discogsData === undefined) {
             return {} as DiscogsData;
         }

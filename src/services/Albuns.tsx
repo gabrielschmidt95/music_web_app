@@ -48,7 +48,6 @@ async function FetchAlbums(artist: string): Promise<AlbumData[]> {
 
 async function HandleAlbum(album: AlbumData) {
     let uri = "";
-    console.log(album);
     if (album.id === undefined || album.id === "") {
         uri = `https://${process.env.REACT_APP_API_DOMAIN}/new/album`;
     }
@@ -61,7 +60,6 @@ async function HandleAlbum(album: AlbumData) {
     }
 
     if (album.discogs === undefined || album.discogs === null || album.discogs.id === 0) {
-        console.log("Discogs", album);
         album.discogs = await GetDiscogs(album);
     }
 
@@ -71,7 +69,6 @@ async function HandleAlbum(album: AlbumData) {
         body: JSON.stringify(album)
     };
     let response = await fetch(uri, requestOptions);
-    console.log(await response.text());
     if (response.status === 401) {
         await Token();
         token = sessionStorage.getItem("token");
@@ -81,7 +78,6 @@ async function HandleAlbum(album: AlbumData) {
 }
 
 async function RemoveAlbum(id: string) {
-    console.log(id);
     const uri = `https://${process.env.REACT_APP_API_DOMAIN}/delete/album`
     const requestOptions = {
         method: 'POST',
@@ -89,7 +85,6 @@ async function RemoveAlbum(id: string) {
         body: JSON.stringify({ id: id })
     };
     let response = await fetch(uri, requestOptions);
-    console.log(await response.text());
     if (response.status === 401) {
         await Token();
         token = sessionStorage.getItem("token");
@@ -100,7 +95,6 @@ async function RemoveAlbum(id: string) {
 
 async function UpdateDiscogs(discogsId: string, album: AlbumData) {
     album.discogs = await GetById(discogsId);
-    console.log(album);
     await HandleAlbum(album);
 }
 
@@ -144,7 +138,6 @@ function sortByArtist(data: Record<string, number>[]): Record<string, string | n
 
 
 async function FetchAlbumsByYearMetric(year: number, metric: string): Promise<Record<string, string>[]> {
-    console.log(JSON.stringify({ year: year, metric: metric }));
     const url = `https://${process.env.REACT_APP_API_DOMAIN}/album/year`
     const requestOptions = {
         method: 'POST',

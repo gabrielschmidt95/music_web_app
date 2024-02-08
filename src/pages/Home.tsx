@@ -78,7 +78,6 @@ const Home: React.FunctionComponent = () => {
                 return;
             }
         }
-        console.log(formValues)
         HandleAlbum(formValues as AlbumData).then((data) => {
             clearContent();
             handleCloseModal();

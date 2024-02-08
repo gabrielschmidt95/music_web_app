@@ -259,7 +259,6 @@ const Dashboard: React.FunctionComponent = () => {
                                 onClick: (evt: any, item: any) => {
                                     if (item[0] !== undefined) {
                                         const artist = top10ArtistsLabels[item[0].index]
-                                        console.log(artist)
                                         FetchAlbums(artist).then((data) => {
                                             let albumData: Record<string, string>[] = []
                                             data.map((album, _) => {

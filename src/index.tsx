@@ -26,7 +26,7 @@ async function signInWithGoogle() {
     localStorage.setItem('user', JSON.stringify(user));
     App();
   } else {
-    console.log('Error');
+    alert('Error signing in with Google');
   }
 }
 
