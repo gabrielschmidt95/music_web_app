@@ -129,6 +129,20 @@ function sortYearData(data: Record<string, string>[], metric: string): Record<st
     return data;
 }
 
+function sortByArtist(data: Record<string, number>[]): Record<string, string | number>[] {
+    data.sort((a, b) => {
+        if (a.artist < b.artist) {
+            return -1;
+        }
+        if (a.artist > b.artist) {
+            return 1;
+        }
+        return 0;
+    });
+    return data;
+}
+
+
 async function FetchAlbumsByYearMetric(year: number, metric: string): Promise<Record<string, string>[]> {
     console.log(JSON.stringify({ year: year, metric: metric }));
     const url = `https://${process.env.REACT_APP_API_DOMAIN}/album/year`
@@ -171,11 +185,34 @@ async function Aggregate(qyery: object): Promise<Record<string, number | string>
     return data;
 }
 
+async function Find(qyery: object): Promise<Record<string, number | string>[]> {
+    const url = `https://${process.env.REACT_APP_API_DOMAIN}/find`
+    const requestOptions = {
+        method: 'POST',
+        headers: await getHeader(),
+        body: JSON.stringify(qyery)
+    };
+
+    let response = await fetch(url, requestOptions);
+    if (response.status === 401) {
+        await Token();
+        token = sessionStorage.getItem("token");
+        response = await fetch(url, requestOptions);
+    }
+    const data = await response.json() as Record<string, number>[];
+    if (data === null) {
+        return [];
+    }
+
+    return sortByArtist(data);
+}
+
 export {
     FetchAlbums,
     HandleAlbum,
     RemoveAlbum,
     UpdateDiscogs,
     FetchAlbumsByYearMetric,
-    Aggregate
+    Aggregate,
+    Find
 }

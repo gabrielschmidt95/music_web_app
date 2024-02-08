@@ -1,9 +1,9 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import Totals from '../services/Totals'
 
 import TotalsData from '../models/Totals';
-import { Col, Row, Container, Table, Modal, Spinner } from "react-bootstrap";
-import { Aggregate, FetchAlbumsByYearMetric, FetchAlbums } from '../services/Albuns';
+import { Col, Row, Container, Table, Modal, Spinner, Card } from "react-bootstrap";
+import { Aggregate, FetchAlbumsByYearMetric, FetchAlbums, Find } from '../services/Albuns';
 
 import { FaRecordVinyl, FaCompactDisc } from "react-icons/fa";
 
@@ -30,7 +30,10 @@ ChartJS.register(
 
 const Dashboard: React.FunctionComponent = () => {
     const [totals, setTotals] = useState<TotalsData>()
+    const [totalValue, setTotalValue] = useState<number>(0)
     const [top10Artists, setTop10Artists] = useState<Record<string, number | string>[]>()
+    const [albunsByCountry, setAlbunsByCountry] = useState<Record<string, number | string>[]>()
+    const [noDiscogs, setNoDiscogs] = useState<Record<string, string>[]>([])
 
     const [showModal, setShowModal] = useState(false);
     const handleCloseModal = () => setShowModal(false);
@@ -39,34 +42,89 @@ const Dashboard: React.FunctionComponent = () => {
     const [modalValue, setModalValue] = useState<Record<string, string>[]>()
     const [modalYear, setModalYear] = useState<number>()
 
-    if (totals === undefined) {
-        Totals().then((data) => {
-            setTotals(data)
-        })
-    }
-    if (top10Artists === undefined) {
-        const query = [
-            {
-                "$group": {
-                    "_id": "$ARTIST",
-                    "total": {
-                        "$sum": 1
+    useEffect(() => {
+        if (totals === undefined) {
+            Totals().then((data) => {
+                data.media = Object.fromEntries(Object.entries(data.media).sort((a, b) => b[1] - a[1]));
+                setTotals(data)
+            })
+        }
+        if (totals !== undefined) {
+            let totalValue: number = 0
+            Object.keys(totals.media).map(key => {
+                return totalValue += totals.media[key]
+            })
+            setTotalValue(totalValue)
+        }
+    }, [totals])
+
+    useEffect(() => {
+        if (top10Artists === undefined) {
+            const query = [
+                {
+                    "$group": {
+                        "_id": "$ARTIST",
+                        "total": {
+                            "$sum": 1
+                        }
+                    }
+                },
+                {
+                    "$sort": {
+                        "total": -1
+                    }
+                },
+                { "$limit": 20 }
+            ]
+
+            Aggregate(query).then((data) => {
+                setTop10Artists(data)
+            })
+
+        }
+    }, [top10Artists])
+
+    useEffect(() => {
+        if (albunsByCountry === undefined) {
+            const query = [
+                {
+                    "$group": {
+                        "_id": "$ORIGIN",
+                        "total": {
+                            "$sum": 1
+                        }
+                    }
+                },
+                {
+                    "$sort": {
+                        "total": -1
                     }
                 }
-            },
-            {
-                "$sort": {
-                    "total": -1
-                }
-            },
-            { "$limit": 20 }
-        ]
+            ]
 
-        Aggregate(query).then((data) => {
-            setTop10Artists(data)
-        })
+            Aggregate(query).then((data) => {
+                setAlbunsByCountry(data)
+            })
 
-    }
+        }
+    })
+
+    useEffect(() => {
+        if (noDiscogs.length === 0) {
+            Find({ "DISCOGS": { "type": "NOT_FOUND" } }).then((data) => {
+                let noDiscogsList: Record<string, string>[] = []
+                data.map((album, _) => {
+                    return noDiscogsList.push({
+                        "title": album.title as string,
+                        "artist": album.artist as string,
+                        "id": album.id as string,
+                    })
+                })
+                setNoDiscogs(noDiscogsList)
+            })
+        }
+    }, [noDiscogs])
+
     const purchaseByYearLabels = Object.keys(totals ? totals.buy : "")
     const purchaseByYear = {
         purchaseByYearLabels,
@@ -106,7 +164,7 @@ const Dashboard: React.FunctionComponent = () => {
                 <Col>
                     <Row>
                         <Col>
-                            <h1>Dashboard</h1>
+                            <h1 style={{ textAlign: 'center' }}>Dashboard</h1>
                         </Col>
                     </Row>
                     <Row
@@ -118,28 +176,69 @@ const Dashboard: React.FunctionComponent = () => {
                             }
                         }
                     >
-                        <Col xs={5}>
-                            <h2>Quantitativo por Mídia</h2>
-                            <Table>
-                                <thead>
-                                    <tr>
-                                        <th>Mídia</th>
-                                        <th>Quantidade</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {
-                                        totals ? Object.keys(totals.media).map(key => {
-                                            return <tr key={key}>
-                                                <td>{key}</td>
-                                                <td>{totals.media[key]}</td>
-                                            </tr>
-                                        }) : <tr><td><Spinner animation="border" /></td></tr>
-                                    }
-                                </tbody>
-                            </Table>
+                        <h2 style={{ textAlign: 'center' }}>Totais</h2>
+                        <Col>
+                            <Card style={{
+                                width: '18rem',
+                                height: '12rem',
+                                boxShadow: '0 4px 8px 0 rgba(0,0,0,0.2)',
+                                borderRadius: '1rem',
+                            }} key={"totals"}>
+                                <Card.Body>
+                                    <Card.Title>Total</Card.Title>
+                                    <Container>
+                                        <Row>
+                                            <Col>
+                                                <svg width="100" height="100">
+                                                    <text x="50" y="55" textAnchor="middle" fontSize="36">{totalValue}</text>
+                                                </svg>
+                                            </Col>
+                                        </Row>
+                                    </Container>
+                                </Card.Body>
+                            </Card>
                         </Col>
-                        <Col xs={5}>
+                        {
+                            totals ? Object.keys(totals.media).map(key => {
+                                return (
+                                    <Col key={key + "col"}>
+                                        <Card key={key}
+                                            style={{
+                                                width: '18rem',
+                                                height: '12rem',
+                                                boxShadow: '0 4px 8px 0 rgba(0,0,0,0.2)',
+                                                borderRadius: '1rem',
+                                            }}>
+                                            <Card.Body>
+                                                <Card.Title>{key}</Card.Title>
+                                                <Container>
+                                                    <Row>
+                                                        <Col>
+                                                            <svg width="100" height="100">
+                                                                <text x="50" y="55" textAnchor="middle" fontSize="36">{totals.media[key]}</text>
+                                                            </svg>
+                                                        </Col>
+                                                        <Col>
+                                                            <svg width="100" height="100">
+                                                                <circle cx="50" cy="50" r="40" stroke="green" strokeWidth="2" fill="none" />
+                                                                <text x="50" y="55" textAnchor="middle" fontSize="16">{(totals.media[key] / totalValue * 100).toFixed(2)}%</text>
+                                                            </svg>
+                                                        </Col>
+                                                    </Row>
+                                                </Container>
+                                            </Card.Body>
+                                        </Card>
+                                    </Col>)
+                            }) : <Col><Spinner animation="border" /></Col>
+                        }
+                    </Row>
+                    <br />
+                    <Row>
+                        <Col style={{
+                            padding: '2rem',
+                            boxShadow: '0 4px 8px 0 rgba(0,0,0,0.2)',
+                            borderRadius: '1rem',
+                        }} xs={6}>
                             <h2>Top 20 Albuns por Artista</h2>
                             <Bar data={{
                                 labels: top10ArtistsLabels,
@@ -162,10 +261,9 @@ const Dashboard: React.FunctionComponent = () => {
                                         const artist = top10ArtistsLabels[item[0].index]
                                         console.log(artist)
                                         FetchAlbums(artist).then((data) => {
-                                            //setModalYear(parseInt(year))
                                             let albumData: Record<string, string>[] = []
                                             data.map((album, _) => {
-                                                albumData.push({
+                                                return albumData.push({
                                                     "title": album.title,
                                                     "artist": album.artist,
                                                     "media": album.media,
@@ -180,6 +278,31 @@ const Dashboard: React.FunctionComponent = () => {
                                     }
                                 }
                             }} />
+                        </Col>
+                        <Col style={{
+                            padding: '2rem',
+                            boxShadow: '0 4px 8px 0 rgba(0,0,0,0.2)',
+                            borderRadius: '1rem',
+                        }} xs={6}>
+                            <h2>Albuns por Origem</h2>
+                            <Table>
+                                <thead>
+                                    <tr>
+                                        <th>Origem</th>
+                                        <th>Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {
+                                        albunsByCountry?.map((country, _) => {
+                                            return <tr key={country._id as string}>
+                                                <td>{country._id}</td>
+                                                <td>{country.total}</td>
+                                            </tr>
+                                        })
+                                    }
+                                </tbody>
+                            </Table>
                         </Col>
                     </Row>
                     <br />
@@ -246,6 +369,38 @@ const Dashboard: React.FunctionComponent = () => {
                             } />
                         </Col>
                     </Row>
+                    <br />
+                    <Row
+                        style={
+                            {
+                                padding: '2rem',
+                                boxShadow: '0 4px 8px 0 rgba(0,0,0,0.2)',
+                                borderRadius: '1rem',
+                            }
+                        }
+                    >
+                        <Col>
+                            <h2>Albuns sem Discogs</h2>
+                            <Table>
+                                <thead>
+                                    <tr>
+                                        <th>Artista</th>
+                                        <th>Album</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {
+                                        noDiscogs.map((album, _) => {
+                                            return <tr key={album.id}>
+                                                <td>{album.artist}</td>
+                                                <td>{album.title}</td>
+                                            </tr>
+                                        })
+                                    }
+                                </tbody>
+                            </Table>
+                        </Col>
+                    </Row>
                 </Col>
             </Container>
             <Modal show={showModal} onHide={handleCloseModal} size="xl" >
@@ -283,7 +438,7 @@ const Dashboard: React.FunctionComponent = () => {
                                                 album.media.startsWith('VINIL') ? <td><FaRecordVinyl color='black' /></td> : <td><FaCompactDisc color='grey' /></td>
                                             }
                                             <td>{album.artist}</td>
-                                            <td>{album.release ? album.release + " - " + album.title: album.title}</td>
+                                            <td>{album.release ? album.release + " - " + album.title : album.title}</td>
                                             <td>{album.media}</td>
                                             <td>{album.purchase ? album.purchase.split("-")[2] + "/" + album.purchase.split("-")[1] + "/" + album.purchase.split("-")[0] : ""}</td>
                                         </tr>

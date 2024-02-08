@@ -68,7 +68,7 @@ const Home: React.FunctionComponent = () => {
         }
         event.preventDefault();
         setValidated(true);
-        
+
         if (formValues.artist === '' || formValues.artist === undefined || formValues.artist === null) {
             if (artist !== undefined && artist.value !== '') {
                 formValues.artist = artist.value;
@@ -77,7 +77,7 @@ const Home: React.FunctionComponent = () => {
                 event.stopPropagation();
                 return;
             }
-        }   
+        }
         console.log(formValues)
         HandleAlbum(formValues as AlbumData).then((data) => {
             clearContent();
@@ -116,7 +116,7 @@ const Home: React.FunctionComponent = () => {
                     </Alert>
                     : ''
             }
-
+            <h2 style={{ textAlign: 'center' }}>Gerenciador de Albuns</h2>
             <Container fluid >
                 <Row>
                     <Col xs={2}>
@@ -189,13 +189,13 @@ const Home: React.FunctionComponent = () => {
                                                     borderRadius: '1rem',
                                                 }
                                             }
-                                            key={item.id}
-                                            onClick={
+                                                key={item.id}
+                                                onClick={
                                                     () => {
                                                         setAlbumInfo(item)
                                                         setFormValues(item)
                                                     }
-                                            }>
+                                                }>
                                                 <Card.Img variant="top" src={item.discogs.cover_image} style={{ width: '18rem', height: '18rem', paddingLeft: '1rem', paddingTop: '1rem' }} />
                                                 <Card.Body>
                                                     <Card.Title>{item.title}</Card.Title>
@@ -260,10 +260,10 @@ const Home: React.FunctionComponent = () => {
                                     <Col>
                                         <Button variant="dark" onClick={
                                             () => {
-                                                if (albumInfo.discogs.uri.startsWith('https://www.discogs.com/')){
+                                                if (albumInfo.discogs.uri.startsWith('https://www.discogs.com/')) {
                                                     window.open(albumInfo.discogs.uri, '_blank')
-                                                }else{
-                                                    window.open('https://www.discogs.com/release/'+albumInfo.discogs.id, '_blank')
+                                                } else {
+                                                    window.open('https://www.discogs.com/release/' + albumInfo.discogs.id, '_blank')
                                                 }
                                             }
 
@@ -442,7 +442,7 @@ const Home: React.FunctionComponent = () => {
                                         handleInputChange('media', e.target.value)
                                         if (e.target.value.startsWith('VINIL')) {
                                             setSetFieldsNA(true);
-                                        }else{
+                                        } else {
                                             setSetFieldsNA(false);
                                         }
                                     }
@@ -470,7 +470,7 @@ const Home: React.FunctionComponent = () => {
                             <Form.Label>IFPI Mastering</Form.Label>
                             <Form.Control
                                 type="text"
-                                defaultValue={setFieldsNA ? "NA" :albumInfo?.ifpiMastering}
+                                defaultValue={setFieldsNA ? "NA" : albumInfo?.ifpiMastering}
                                 onChange={
                                     (e) => handleInputChange('ifpiMastering', e.target.value)
                                 }
@@ -480,7 +480,7 @@ const Home: React.FunctionComponent = () => {
                             <Form.Label>IFPI Mould</Form.Label>
                             <Form.Control
                                 type="text"
-                                defaultValue={setFieldsNA ? "NA" :albumInfo?.ifpiMould}
+                                defaultValue={setFieldsNA ? "NA" : albumInfo?.ifpiMould}
                                 onChange={
                                     (e) => handleInputChange('ifpiMould', e.target.value)
                                 }
@@ -510,7 +510,7 @@ const Home: React.FunctionComponent = () => {
                             <Form.Label>Lote</Form.Label>
                             <Form.Control
                                 type="text"
-                                defaultValue={setFieldsNA ? "NA" :albumInfo?.lote}
+                                defaultValue={setFieldsNA ? "NA" : albumInfo?.lote}
                                 onChange={
                                     (e) => handleInputChange('lote', e.target.value)
                                 }
@@ -520,7 +520,7 @@ const Home: React.FunctionComponent = () => {
                             <Form.Label>Observação</Form.Label>
                             <Form.Control
                                 type="text"
-                                defaultValue={setFieldsNA ? "NA" :albumInfo?.obs}
+                                defaultValue={setFieldsNA ? "NA" : albumInfo?.obs}
                                 onChange={
                                     (e) => handleInputChange('obs', e.target.value)
                                 }
