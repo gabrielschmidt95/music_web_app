@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import Token from './Token';
+import Artist from '../models/Artist'
 
 let token = sessionStorage.getItem("token")
 
@@ -25,7 +26,7 @@ async function fetchArtists(): Promise<string[]> {
     return await response.json();
 }
 
-function Artists() {
+function Artists(): Artist[] {
     const [artists, setArtists] = useState<string[]>([]);
     useEffect(() => {
         async function fetchData() {
@@ -38,7 +39,7 @@ function Artists() {
 
     return artists.map((item) => {
         return (
-            { value: item, label: item }
+            { id: item, name: item }
         )
     })
 }

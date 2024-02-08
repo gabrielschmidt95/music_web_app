@@ -1,11 +1,15 @@
 import { Routes, Route } from 'react-router-dom';
-import Home from './pages/Home';
+import Manager from './pages/Manager';
 import Dashboard from './pages/Dashboard';
+import ArtistList from './pages/Artirst';
+
 const Main = () => {
   return (
     <Routes>
-      <Route path='/' element={<Home />} />
+      <Route path='/' element={<Dashboard />} />
       <Route path='/dashboard' element={<Dashboard />} />
+      <Route path='/manager' element={<Manager />} />
+      <Route path='/artists' element={<ArtistList />} />
     </Routes>
   );
 }

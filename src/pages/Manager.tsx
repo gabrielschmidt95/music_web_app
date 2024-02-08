@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import Select from 'react-select'
+import { ReactSearchAutocomplete } from 'react-search-autocomplete'
 import { Row, Col, Container, Card, ListGroup, Badge, Button, Modal, Form, Alert, Image } from 'react-bootstrap';
 
 import AlbumData from '../models/Album'
@@ -106,6 +106,20 @@ const Home: React.FunctionComponent = () => {
         setFormValues({ ...formValues, [title]: event });
     }
 
+    const handleSelectArtist = (item: { id: string; name: string; }) => {
+        setAlbuns(undefined);
+        setAlbumInfo(undefined);
+        setArtist(
+            {
+                value: item.id,
+                label: item.name
+            }
+        );
+        FetchAlbums(item.name).then((data) => {
+            setAlbuns(data)
+        });
+    }
+
     return (
         <>
             {
@@ -119,50 +133,68 @@ const Home: React.FunctionComponent = () => {
             <Container fluid >
                 <Row>
                     <Col xs={2}>
-                        <Select options={Artists()} onChange={
-                            (e) => {
-                                if (e?.value) {
-                                    setAlbuns(undefined);
-                                    setAlbumInfo(undefined);
-                                    setArtist(
-                                        {
-                                            value: e.value,
-                                            label: e.value
-                                        }
-                                    );
-                                    FetchAlbums(e.value).then((data) => {
-                                        setAlbuns(data)
-                                    });
+                        <ReactSearchAutocomplete
+                            items={Artists()}
+                            autoFocus
+                            onSelect={handleSelectArtist}
+                            styling={
+                                {
+                                    height: '50px',
+                                    borderRadius: '1rem',
+                                    boxShadow: '0 4px 8px 0 rgba(0,0,0,0.2)',
+                                    zIndex: 1000
                                 }
                             }
-                        }
-                            placeholder="Selecione o artista"
-                            value={artist}
                         />
                     </Col>
-                    <Col xs={2}>
-                        <Button variant="success" onClick={
-                            () => {
-                                setAlbumInfo(undefined);
-                                setFormValues({
-                                    title: '',
-                                    artist: '',
-                                    releaseYear: 0,
-                                    origin: '',
-                                    purchase: '',
-                                    media: 'CD',
-                                    editionYear: 0,
-                                    ifpiMastering: '',
-                                    ifpiMould: '',
-                                    barcode: '',
-                                    matriz: '',
-                                    lote: '',
-                                    obs: ''
-                                });
-                                setModalType('Adicionar Album')
-                                handleShowModal();
+                    <Col xs={1}>
+                        <Button variant="success"
+                            style={
+                                {
+                                    height: '50px',
+                                    borderRadius: '1rem',
+                                    boxShadow: '0 4px 8px 0 rgba(0,0,0,0.2)',
+                                    zIndex: 1000
+                                }
                             }
-                        }>Adicionar Album</Button>
+                            onClick={
+                                () => {
+                                    setAlbumInfo(undefined);
+                                    setFormValues({
+                                        title: '',
+                                        artist: '',
+                                        releaseYear: 0,
+                                        origin: '',
+                                        purchase: '',
+                                        media: 'CD',
+                                        editionYear: 0,
+                                        ifpiMastering: '',
+                                        ifpiMould: '',
+                                        barcode: '',
+                                        matriz: '',
+                                        lote: '',
+                                        obs: ''
+                                    });
+                                    setModalType('Adicionar Album')
+                                    handleShowModal();
+                                }
+                            }>Adicionar Album</Button>
+                    </Col>
+                    <Col xs={2}>
+                        <Button variant="danger"
+                            style={
+                                {
+                                    height: '50px',
+                                    borderRadius: '1rem',
+                                    boxShadow: '0 4px 8px 0 rgba(0,0,0,0.2)',
+                                    zIndex: 1000
+                                }
+                            }
+                            onClick={
+                                () => {
+                                    clearContent();
+                                }
+                            }>Limpar</Button>
                     </Col>
                 </Row>
                 <br />
@@ -383,7 +415,7 @@ const Home: React.FunctionComponent = () => {
                             >
                                 <option value={""}>Selecione o Artista</option>
                                 {Artists().map((item, _) => (
-                                    <option key={item.value}>{item.value}</option>
+                                    <option key={item.name}>{item.name}</option>
                                 ))}
                             </Form.Select>
 
