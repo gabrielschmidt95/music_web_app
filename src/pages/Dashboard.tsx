@@ -167,6 +167,7 @@ const Dashboard: React.FunctionComponent = () => {
                             <h1 style={{ textAlign: 'center' }}>Dashboard</h1>
                         </Col>
                     </Row>
+                    <br />
                     <Row
                         style={
                             {
@@ -232,6 +233,69 @@ const Dashboard: React.FunctionComponent = () => {
                                     </Col>)
                             }) : <Col><Spinner animation="border" /></Col>
                         }
+                    </Row>
+                    <Row>
+                        <Col
+                            style={{
+                                padding: '2rem',
+                                boxShadow: '0 4px 8px 0 rgba(0,0,0,0.2)',
+                                borderRadius: '1rem',
+                            }}
+                        >
+                            <h2>Compras por Ano</h2>
+                            <Bar data={purchaseByYear} options={{
+                                responsive: true,
+                                plugins: {
+                                    legend: {
+                                        position: 'top' as const,
+                                    },
+                                },
+                                onClick: (evt: any, item: any) => {
+                                    if (item[0] !== undefined) {
+                                        const year = Object.keys(purchaseByYear.datasets[0].data!)[item[0].index]
+                                        FetchAlbumsByYearMetric(parseInt(year), "purchase").then((data) => {
+                                            setModalYear(parseInt(year))
+                                            setModalValue(data)
+                                            handleShowModal()
+                                        })
+
+                                    }
+                                }
+                            }} />
+                        </Col>
+
+                        <Col
+                            style={
+                                {
+                                    padding: '2rem',
+                                    boxShadow: '0 4px 8px 0 rgba(0,0,0,0.2)',
+                                    borderRadius: '1rem',
+                                }
+                            }
+                        >
+                            <h2>Lançamentos por Ano</h2>
+                            <Bar data={releaseByYear} options={
+                                {
+                                    responsive: true,
+                                    plugins: {
+                                        legend: {
+                                            position: 'top' as const,
+                                        },
+                                    },
+                                    onClick: (evt: any, item: any) => {
+                                        if (item[0] !== undefined) {
+                                            const year = Object.keys(releaseByYear.datasets[0].data!)[item[0].index]
+                                            FetchAlbumsByYearMetric(parseInt(year), "release_year").then((data) => {
+                                                setModalYear(parseInt(year))
+                                                setModalValue(data)
+                                                handleShowModal()
+                                            })
+
+                                        }
+                                    }
+                                }
+                            } />
+                        </Col>
                     </Row>
                     <br />
                     <Row>
@@ -303,70 +367,6 @@ const Dashboard: React.FunctionComponent = () => {
                                     }
                                 </tbody>
                             </Table>
-                        </Col>
-                    </Row>
-                    <br />
-                    <Row>
-                        <Col
-                            style={{
-                                padding: '2rem',
-                                boxShadow: '0 4px 8px 0 rgba(0,0,0,0.2)',
-                                borderRadius: '1rem',
-                            }}
-                        >
-                            <h2>Compras por Ano</h2>
-                            <Bar data={purchaseByYear} options={{
-                                responsive: true,
-                                plugins: {
-                                    legend: {
-                                        position: 'top' as const,
-                                    },
-                                },
-                                onClick: (evt: any, item: any) => {
-                                    if (item[0] !== undefined) {
-                                        const year = Object.keys(purchaseByYear.datasets[0].data!)[item[0].index]
-                                        FetchAlbumsByYearMetric(parseInt(year), "purchase").then((data) => {
-                                            setModalYear(parseInt(year))
-                                            setModalValue(data)
-                                            handleShowModal()
-                                        })
-
-                                    }
-                                }
-                            }} />
-                        </Col>
-
-                        <Col
-                            style={
-                                {
-                                    padding: '2rem',
-                                    boxShadow: '0 4px 8px 0 rgba(0,0,0,0.2)',
-                                    borderRadius: '1rem',
-                                }
-                            }
-                        >
-                            <h2>Lançamentos por Ano</h2>
-                            <Bar data={releaseByYear} options={
-                                {
-                                    responsive: true,
-                                    plugins: {
-                                        legend: {
-                                            position: 'top' as const,
-                                        },
-                                    },
-                                    onClick: (evt: any, item: any) => {
-                                        if (item[0] !== undefined) {
-                                            const year = Object.keys(releaseByYear.datasets[0].data!)[item[0].index]
-                                            FetchAlbumsByYearMetric(parseInt(year), "release_year").then((data) => {
-                                                setModalYear(parseInt(year))
-                                                setModalValue(data)
-                                                handleShowModal()
-                                            })
-
-                                        }
-                                    }
-                                }
-                            } />
                         </Col>
                     </Row>
                     <br />

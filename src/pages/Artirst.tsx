@@ -1,4 +1,4 @@
-import { Card, Container, Row, Col, Spinner } from 'react-bootstrap'
+import { Card, Container, Row, Col } from 'react-bootstrap'
 import { useState, useEffect } from 'react'
 import { Aggregate } from '../services/Albuns';
 import { FaSpotify } from 'react-icons/fa';

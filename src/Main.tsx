@@ -6,7 +6,7 @@ import ArtistList from './pages/Artirst';
 const Main = () => {
   return (
     <Routes>
-      <Route path='/' element={<Dashboard />} />
+      <Route path='/' element={<Manager />} />
       <Route path='/dashboard' element={<Dashboard />} />
       <Route path='/manager' element={<Manager />} />
       <Route path='/artists' element={<ArtistList />} />

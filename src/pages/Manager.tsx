@@ -1,11 +1,18 @@
 import React, { useState } from 'react'
-import { ReactSearchAutocomplete } from 'react-search-autocomplete'
-import { Row, Col, Container, Card, ListGroup, Badge, Button, Modal, Form, Alert, Image } from 'react-bootstrap';
+import { Row, Col, Container, Button } from 'react-bootstrap';
 
 import AlbumData from '../models/Album'
+
 import Artists from '../services/Artists'
 import { FetchAlbums, HandleAlbum, RemoveAlbum, UpdateDiscogs } from '../services/Albuns';
-import DateTimeFormat from '../services/Utils';
+
+import SelectArtist from '../components/SelectArtists';
+import AlbumInfo from '../components/AlbumInfo';
+import ModalDelete from '../components/ModalDelete';
+import ModalFixDiscogs from '../components/ModalFixDiscogs';
+import ModalEdit from '../components/ModalEdit';
+import Discograpy from '../components/Discograpy';
+import Alert from '../components/Alert';
 
 const Home: React.FunctionComponent = () => {
     const [albuns, setAlbuns] = useState<AlbumData[]>();
@@ -16,8 +23,6 @@ const Home: React.FunctionComponent = () => {
     const handleCloseModal = () => setShowModal(false);
     const handleShowModal = () => setShowModal(true);
 
-    const [newArtist, setNewArtist] = useState(false);
-    const [setFieldsNA, setSetFieldsNA] = useState(false);
 
     const [showModalFixDiscogs, setShowModalFixDiscogs] = useState(false);
     const handleCloseModalFixDiscogs = () => setShowModalFixDiscogs(false);
@@ -55,7 +60,36 @@ const Home: React.FunctionComponent = () => {
         setAlbuns(undefined);
         setAlbumInfo(undefined);
         setArtist({ value: '', label: '' });
-        setSetFieldsNA(false);
+    }
+    function clearForm() {
+        setFormValues({
+            title: '',
+            artist: '',
+            releaseYear: 0,
+            origin: '',
+            purchase: '',
+            media: 'CD',
+            editionYear: 0,
+            ifpiMastering: '',
+            ifpiMould: '',
+            barcode: '',
+            matriz: '',
+            lote: '',
+            obs: ''
+        });
+    }
+
+    function removeAlbum(albumInfo: AlbumData) {
+        RemoveAlbum(albumInfo.id).then((_) => {
+            clearContent();
+            setAlbuns(undefined);
+            setAlbumInfo(undefined);
+            setArtist({ value: albumInfo.artist, label: albumInfo.artist });
+            handleCloseModalDelete();
+            FetchAlbums(albumInfo.artist).then((data) => {
+                setAlbuns(data)
+            });
+        });
     }
 
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
@@ -122,29 +156,15 @@ const Home: React.FunctionComponent = () => {
 
     return (
         <>
-            {
-                showAlert ?
-                    <Alert key="alert" variant="success" dismissible onClose={() => setShowAlert(false)}>
-                        Album Alterado com Sucesso
-                    </Alert>
-                    : ''
-            }
+            <Alert showAlert={showAlert} setShowAlert={setShowAlert} />
             <h2 style={{ textAlign: 'center' }}>Gerenciador de Albuns</h2>
             <Container fluid >
                 <Row>
                     <Col xs={2}>
-                        <ReactSearchAutocomplete
+                        <SelectArtist
                             items={Artists()}
-                            autoFocus
-                            onSelect={handleSelectArtist}
-                            styling={
-                                {
-                                    height: '50px',
-                                    borderRadius: '1rem',
-                                    boxShadow: '0 4px 8px 0 rgba(0,0,0,0.2)',
-                                    zIndex: 1000
-                                }
-                            }
+                            handleSelectArtist={handleSelectArtist}
+                            clearContent={clearContent}
                         />
                     </Col>
                     <Col xs={1}>
@@ -160,459 +180,56 @@ const Home: React.FunctionComponent = () => {
                             onClick={
                                 () => {
                                     setAlbumInfo(undefined);
-                                    setFormValues({
-                                        title: '',
-                                        artist: '',
-                                        releaseYear: 0,
-                                        origin: '',
-                                        purchase: '',
-                                        media: 'CD',
-                                        editionYear: 0,
-                                        ifpiMastering: '',
-                                        ifpiMould: '',
-                                        barcode: '',
-                                        matriz: '',
-                                        lote: '',
-                                        obs: ''
-                                    });
+                                    clearForm();
                                     setModalType('Adicionar Album')
                                     handleShowModal();
                                 }
                             }>Adicionar Album</Button>
                     </Col>
-                    <Col xs={2}>
-                        <Button variant="danger"
-                            style={
-                                {
-                                    height: '50px',
-                                    borderRadius: '1rem',
-                                    boxShadow: '0 4px 8px 0 rgba(0,0,0,0.2)',
-                                    zIndex: 1000
-                                }
-                            }
-                            onClick={
-                                () => {
-                                    clearContent();
-                                }
-                            }>Limpar</Button>
-                    </Col>
                 </Row>
                 <br />
                 <Row>
                     <Col >
-                        {albuns ?
-                            <Container style={
-                                {
-                                    padding: '1rem',
-                                    height: '90vh',
-                                    overflowY: 'auto',
-                                    boxShadow: '0 4px 8px 0 rgba(0,0,0,0.2)',
-                                    borderRadius: '1rem'
-                                }
-                            }>
-                                <Row md="auto">
-                                    {albuns.map((item, _) => (
-                                        <Col key={item.id} style={{ padding: '1rem' }}>
-                                            <Card style={
-                                                {
-                                                    width: '20rem',
-                                                    boxShadow: '0 4px 8px 0 rgba(0,0,0,0.2)',
-                                                    borderRadius: '1rem',
-                                                }
-                                            }
-                                                key={item.id}
-                                                onClick={
-                                                    () => {
-                                                        setAlbumInfo(item)
-                                                        setFormValues(item)
-                                                    }
-                                                }>
-                                                <Card.Img variant="top" src={item.discogs.cover_image} style={{ width: '18rem', height: '18rem', paddingLeft: '1rem', paddingTop: '1rem' }} />
-                                                <Card.Body>
-                                                    <Card.Title>{item.title}</Card.Title>
-                                                    <Card.Subtitle className="mb-2 text-muted">{item.artist}</Card.Subtitle>
-                                                </Card.Body>
-                                            </Card>
-                                        </Col>
-                                    ))}
-                                </Row>
-                            </Container> : ''}
-
+                        <Discograpy
+                            albuns={albuns as AlbumData[]}
+                            setAlbumInfo={setAlbumInfo}
+                            setFormValues={setFormValues}
+                        />
                     </Col>
                     <Col>
-                        {albumInfo ?
-                            <Container style={
-                                {
-                                    padding: '1rem',
-                                    height: '90vh',
-                                    boxShadow: '0 4px 8px 0 rgba(0,0,0,0.2)',
-                                    borderRadius: '1rem'
-                                }
-                            }>
-                                <h1>Informações do Album</h1>
-                                <Row>
-                                    <Col>
-                                        <Image src={albumInfo.discogs.cover_image}
-                                            alt='Capa do Album' thumbnail />
-                                    </Col>
-                                    <Col>
-                                        <ListGroup variant="flush">
-                                            <ListGroup.Item>Ano: {albumInfo.releaseYear}</ListGroup.Item>
-                                            <ListGroup.Item>Artista: {albumInfo.artist}</ListGroup.Item>
-                                            <ListGroup.Item>Título: {albumInfo.title}</ListGroup.Item>
-                                            <ListGroup.Item>Mídia: {albumInfo.media}</ListGroup.Item>
-                                            <ListGroup.Item>Compra: {
-                                                DateTimeFormat(albumInfo.purchase)
-                                            }</ListGroup.Item>
-                                            <ListGroup.Item>Origem: {albumInfo.origin}</ListGroup.Item>
-                                            <ListGroup.Item>Ano de Edição: {albumInfo.editionYear}</ListGroup.Item>
-                                            <ListGroup.Item>IFPI Mastering: {albumInfo.ifpiMastering}</ListGroup.Item>
-                                            <ListGroup.Item>IFPI Mould: {albumInfo.ifpiMould}</ListGroup.Item>
-                                            <ListGroup.Item>Barcode: {albumInfo.barcode}</ListGroup.Item>
-                                            <ListGroup.Item>Matriz: {albumInfo.matriz}</ListGroup.Item>
-                                            <ListGroup.Item>Lote: {albumInfo.lote}</ListGroup.Item>
-                                            <ListGroup.Item>Observação: {albumInfo.obs}</ListGroup.Item>
-                                        </ListGroup>
-                                    </Col>
-                                </Row>
-
-                                <br />
-                                <Row>
-                                    <Col>
-                                        <Button variant="success" onClick={
-                                            () => {
-                                                window.open(albumInfo.spotify.external_urls.spotify, '_blank')
-                                            }
-
-                                        }
-                                            disabled={albumInfo.spotify.external_urls.spotify === ''}
-                                        >Spotify</Button>
-                                    </Col>
-                                    <Col>
-                                        <Button variant="dark" onClick={
-                                            () => {
-                                                if (albumInfo.discogs.uri.startsWith('https://www.discogs.com/')) {
-                                                    window.open(albumInfo.discogs.uri, '_blank')
-                                                } else {
-                                                    window.open('https://www.discogs.com/release/' + albumInfo.discogs.id, '_blank')
-                                                }
-                                            }
-
-                                        }
-                                            disabled={albumInfo.discogs.uri === ''}
-                                        >Discogs</Button>
-                                    </Col>
-                                    <Col>
-                                        <Button variant="primary" onClick={
-                                            () => {
-                                                handleShowModal();
-                                                setModalType('Editar Album')
-                                            }
-                                        }>
-                                            Editar
-                                        </Button>
-                                    </Col>
-                                    <Col>
-                                        <Button variant="danger" onClick={
-                                            () => {
-                                                handleShowModalDelete();
-                                            }
-                                        }>
-                                            Deletar
-                                        </Button>
-                                    </Col>
-                                    <Col>
-                                        <Button variant="danger"
-                                            onClick={
-                                                () => {
-                                                    handleShowModalFixDiscogs();
-                                                }
-                                            }
-                                        >
-                                            Fix Dicogs
-                                        </Button>
-                                    </Col>
-                                </Row>
-                                <br />
-                                <Row>
-                                    <Col>
-                                        <h2>Lista de Músicas</h2>
-                                        <ListGroup as="ol" numbered style={
-                                            {
-                                                padding: '1rem',
-                                                border: '1px solid #000',
-                                                height: '30vh',
-                                                overflowY: 'auto',
-                                                boxShadow: '0 4px 8px 0 rgba(0,0,0,0.2)'
-                                            }
-
-                                        }>
-                                            {albumInfo.discogs.tracks ? albumInfo.discogs.tracks.map((item, _) => (
-                                                <ListGroup.Item
-                                                    as="li"
-                                                    className="d-flex justify-content-between align-items-start"
-                                                    key={item.title}
-                                                >
-                                                    <div className="ms-2 me-auto">
-                                                        <div className="fw-bold">{item.title}</div>
-                                                    </div>
-                                                    <Badge bg="primary" pill>
-                                                        {item.duration}
-                                                    </Badge>
-                                                </ListGroup.Item>
-                                            )) : ''}
-                                        </ListGroup>
-                                    </Col>
-                                </Row>
-
-                            </Container>
-                            : ''}
+                        <AlbumInfo
+                            albumInfo={albumInfo as AlbumData}
+                            handleShowModalDelete={handleShowModalDelete}
+                            handleShowModalFixDiscogs={handleShowModalFixDiscogs}
+                            handleShowModal={handleShowModal}
+                            setModalType={setModalType}
+                        />
                     </Col>
                 </Row>
             </Container>
-            <Modal show={showModal} onHide={handleCloseModal}>
-                <Form validated={validated} onSubmit={handleSubmit}>
-                    <Modal.Header closeButton>
-                        <Modal.Title>{modalType}</Modal.Title>
-                    </Modal.Header>
-                    <Modal.Body>
-                        <Form.Group className="mb-3" controlId="editForm.ControlInput1">
-                            <Form.Label>Titulo</Form.Label>
-                            <Form.Control
-                                required
-                                type="text"
-                                defaultValue={albumInfo?.title}
-                                autoFocus
-                                onChange={
-                                    (e) => handleInputChange('title', e.target.value.toUpperCase())
-                                }
-                            />
-                        </Form.Group>
-                        <Form.Group className="mb-3" controlId="editForm.ControlInput2">
-                            <Form.Label>Artista</Form.Label>
-                            <Form.Control
-                                style={
-                                    {
-                                        display: newArtist ? 'block' : 'none'
-                                    }
-                                }
-                                placeholder='Novo Artista'
-                                type="text"
-                                onChange={
-                                    (e) => handleInputChange('artist', e.target.value.toUpperCase())
-                                }
-                            />
-                            <Form.Select aria-label="Default select example"
-                                style={
-                                    {
-                                        display: newArtist ? 'none' : 'block'
-                                    }
-                                }
-                                onChange={
-                                    (e) => handleInputChange('artist', e.target.value)
-                                }
-                                defaultValue={artist?.value}
-                            >
-                                <option value={""}>Selecione o Artista</option>
-                                {Artists().map((item, _) => (
-                                    <option key={item.name}>{item.name}</option>
-                                ))}
-                            </Form.Select>
-
-                            <Form.Check
-                                type="checkbox"
-                                id="editForm.ControlInput2"
-                                label="Novo Artista"
-                                onChange={
-                                    (e) => {
-                                        if (e.target.checked) {
-                                            setNewArtist(true);
-                                        } else {
-                                            setNewArtist(false);
-                                        }
-                                    }
-                                }
-                            />
-                        </Form.Group>
-                        <Form.Group className="mb-3" controlId="editForm.ControlInput3">
-                            <Form.Label>Ano</Form.Label>
-                            <Form.Control
-                                required
-                                type="number"
-                                defaultValue={albumInfo?.releaseYear}
-                                onChange={
-                                    (e) => handleInputChange('releaseYear', parseInt(e.target.value))
-                                }
-                            />
-                        </Form.Group>
-                        <Form.Group className="mb-3" controlId="editForm.ControlInput4">
-                            <Form.Label>Origem</Form.Label>
-                            <Form.Control
-                                type="text"
-                                defaultValue={albumInfo?.origin}
-                                onChange={
-                                    (e) => handleInputChange('origin', e.target.value)
-                                }
-                            />
-                        </Form.Group>
-                        <Form.Group className="mb-3" controlId="editForm.ControlInput5">
-                            <Form.Label>Compra</Form.Label>
-                            <Form.Control
-                                type="date"
-                                defaultValue={albumInfo?.purchase ? albumInfo.purchase.split('T')[0] : ''}
-                                onChange={
-                                    (e) => handleInputChange('purchase', e.target.value)
-                                }
-                            />
-                        </Form.Group>
-                        <Form.Group className="mb-3" controlId="editForm.ControlInput6">
-                            <Form.Label>Mídia</Form.Label>
-                            <Form.Select required aria-label="Default select example"
-                                onChange={
-                                    (e) => {
-                                        handleInputChange('media', e.target.value)
-                                        if (e.target.value.startsWith('VINIL')) {
-                                            setSetFieldsNA(true);
-                                        } else {
-                                            setSetFieldsNA(false);
-                                        }
-                                    }
-                                }
-                                defaultValue={albumInfo?.media}
-                            >
-                                <option>CD</option>
-                                <option>COMPACTO</option>
-                                <option>VINIL</option>
-                                <option>VINIL &gt; CD</option>
-                                <option>VINIL &gt; MP3</option>
-                            </Form.Select>
-                        </Form.Group>
-                        <Form.Group className="mb-3" controlId="editForm.ControlInput7">
-                            <Form.Label>Ano de Edição</Form.Label>
-                            <Form.Control
-                                type="number"
-                                defaultValue={albumInfo?.editionYear}
-                                onChange={
-                                    (e) => handleInputChange('editionYear', parseInt(e.target.value))
-                                }
-                            />
-                        </Form.Group>
-                        <Form.Group className="mb-3" controlId="editForm.ControlInput8">
-                            <Form.Label>IFPI Mastering</Form.Label>
-                            <Form.Control
-                                type="text"
-                                defaultValue={setFieldsNA ? "NA" : albumInfo?.ifpiMastering}
-                                onChange={
-                                    (e) => handleInputChange('ifpiMastering', e.target.value)
-                                }
-                            />
-                        </Form.Group>
-                        <Form.Group className="mb-3" controlId="editForm.ControlInput9">
-                            <Form.Label>IFPI Mould</Form.Label>
-                            <Form.Control
-                                type="text"
-                                defaultValue={setFieldsNA ? "NA" : albumInfo?.ifpiMould}
-                                onChange={
-                                    (e) => handleInputChange('ifpiMould', e.target.value)
-                                }
-                            />
-                        </Form.Group>
-                        <Form.Group className="mb-3" controlId="editForm.ControlInput10">
-                            <Form.Label>Barcode</Form.Label>
-                            <Form.Control
-                                type="text"
-                                defaultValue={albumInfo?.barcode}
-                                onChange={
-                                    (e) => handleInputChange('barcode', e.target.value)
-                                }
-                            />
-                        </Form.Group>
-                        <Form.Group className="mb-3" controlId="editForm.ControlInput11">
-                            <Form.Label>Matriz</Form.Label>
-                            <Form.Control
-                                as="textarea"
-                                defaultValue={albumInfo?.matriz}
-                                onChange={
-                                    (e) => handleInputChange('matriz', e.target.value)
-                                }
-                            />
-                        </Form.Group>
-                        <Form.Group className="mb-3" controlId="editForm.ControlInput12">
-                            <Form.Label>Lote</Form.Label>
-                            <Form.Control
-                                type="text"
-                                defaultValue={setFieldsNA ? "NA" : albumInfo?.lote}
-                                onChange={
-                                    (e) => handleInputChange('lote', e.target.value)
-                                }
-                            />
-                        </Form.Group>
-                        <Form.Group className="mb-3" controlId="editForm.ControlInput12">
-                            <Form.Label>Observação</Form.Label>
-                            <Form.Control
-                                type="text"
-                                defaultValue={setFieldsNA ? "NA" : albumInfo?.obs}
-                                onChange={
-                                    (e) => handleInputChange('obs', e.target.value)
-                                }
-                            />
-                        </Form.Group>
-
-                    </Modal.Body>
-                    <Modal.Footer>
-                        <Button type="submit">Salvar</Button>
-                    </Modal.Footer>
-                </Form>
-            </Modal>
-            <Modal show={showModalFixDiscogs} onHide={handleCloseModalFixDiscogs}>
-                <Form validated={validatedFixDiscogs} onSubmit={handleSubmitFixDiscogs}>
-                    <Modal.Header closeButton>
-                        <Modal.Title>Fix Discogs</Modal.Title>
-                    </Modal.Header>
-                    <Modal.Body>
-                        <Form.Group className="mb-3" controlId="fixDiscogs.ControlInput1">
-                            <Form.Label>Entre com Codigo de identificação [r...]</Form.Label>
-                            <Form.Control
-                                type="text"
-                                onChange={
-                                    (e) => setFixDiscogs(e.target.value)
-                                }
-                            />
-                        </Form.Group>
-                    </Modal.Body>
-                    <Modal.Footer>
-                        <Button variant="primary" type="submit">
-                            Salvar
-                        </Button>
-                    </Modal.Footer>
-                </Form>
-            </Modal>
-            <Modal show={showModalDelete} onHide={handleCloseModalDelete}>
-                <Modal.Header closeButton>
-                    <Modal.Title>Deletar Album</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    <p>Tem certeza que deseja deletar o album {albumInfo?.title} de {albumInfo?.artist}?</p>
-                </Modal.Body>
-                <Modal.Footer>
-                    <Button variant="danger" onClick={
-                        () => {
-                            if (albumInfo)
-                                RemoveAlbum(albumInfo.id).then((data) => {
-                                    clearContent();
-                                    setAlbuns(undefined);
-                                    setAlbumInfo(undefined);
-                                    setArtist({ value: albumInfo.artist, label: albumInfo.artist });
-                                    handleCloseModalDelete();
-                                    FetchAlbums(albumInfo.artist).then((data) => {
-                                        setAlbuns(data)
-                                    });
-                                });
-
-                        }
-                    }>Deletar</Button>
-                </Modal.Footer>
-            </Modal>
+            <ModalEdit
+                albumInfo={albumInfo as AlbumData}
+                showModal={showModal}
+                handleCloseModal={handleCloseModal}
+                handleSubmit={handleSubmit}
+                validated={validated}
+                handleInputChange={handleInputChange}
+                artist={artist}
+                modalType={modalType}
+            />
+            <ModalFixDiscogs
+                showModalFixDiscogs={showModalFixDiscogs}
+                validatedFixDiscogs={validatedFixDiscogs}
+                handleCloseModalFixDiscogs={handleCloseModalFixDiscogs}
+                handleSubmitFixDiscogs={handleSubmitFixDiscogs}
+                setFixDiscogs={setFixDiscogs}
+            />
+            <ModalDelete
+                albumInfo={albumInfo as AlbumData}
+                showModalDelete={showModalDelete}
+                handleCloseModalDelete={handleCloseModalDelete}
+                removeAlbum={removeAlbum}
+            />
         </>
 
     )
