@@ -52,7 +52,8 @@ const Dashboard: React.FunctionComponent = () => {
         if (totals !== undefined) {
             let totalValue: number = 0
             Object.keys(totals.media).map(key => {
-                return totalValue += totals.media[key]
+                totalValue += totals.media[key]
+                return totalValue
             })
             setTotalValue(totalValue)
         }
@@ -184,8 +185,8 @@ const Dashboard: React.FunctionComponent = () => {
                                 height: '12rem',
                                 boxShadow: '0 4px 8px 0 rgba(0,0,0,0.2)',
                                 borderRadius: '1rem',
-                            }} 
-                            key={"totals"}>
+                            }}
+                                key={"totals"}>
                                 <Card.Body>
                                     <Card.Title>Total</Card.Title>
                                     <Container>

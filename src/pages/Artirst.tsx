@@ -52,12 +52,12 @@ const ArtistList: React.FunctionComponent = () => {
                     {
                         top10Artists?.map((artist, _) => {
                             return (
-                                    <Col key={artist._id} style={{ padding: '1rem' }}>
+                                    <Col key={artist._id} style={{ padding: '1rem' }} xs={12}>
                                         <Card
                                             style={
                                                 {
-                                                    height: '15rem',
-                                                    width: '16rem',
+                                                    height: '   rem',
+                                                    width: '100%',
                                                     boxShadow: '0 4px 8px 0 rgba(0,0,0,0.2)',
                                                     borderRadius: '1rem'
                                                 }
