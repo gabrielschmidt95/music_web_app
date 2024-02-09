@@ -45,6 +45,26 @@ async function FetchAlbums(artist: string): Promise<AlbumData[]> {
     return data;
 }
 
+async function FetchAlbumByTitle(title: string): Promise<AlbumData[]> {
+    const url = `https://${process.env.REACT_APP_API_DOMAIN}/title`
+    const requestOptions = {
+        method: 'POST',
+        headers: await getHeader(),
+        body: JSON.stringify({ title: title })
+    };
+    let response = await fetch(url, requestOptions);
+    if (response.status === 401) {
+        await Token();
+        token = sessionStorage.getItem("token");
+        response = await fetch(url, requestOptions);
+    }
+    const data = await response.json() as AlbumData[];
+    if (data === null) {
+        return [];
+    }
+    return data;
+}
+
 
 async function HandleAlbum(album: AlbumData) {
     let uri = "";
@@ -206,6 +226,7 @@ export {
     RemoveAlbum,
     UpdateDiscogs,
     FetchAlbumsByYearMetric,
+    FetchAlbumByTitle,
     Aggregate,
     Find
 }

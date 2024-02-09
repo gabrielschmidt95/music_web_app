@@ -57,15 +57,7 @@ const Home: React.FunctionComponent = () => {
             {SidebarData.map((item) => {
                 return (
                     <MenuItems key={item.title}>
-                        <MenuItemLinks to={item.path} onClick={
-                            () => {
-                                if (sessionStorage.getItem('currentPage') === item.path) {
-                                    window.location.reload();
-                                }
-                                sessionStorage.setItem('currentPage', item.path);
-                            }
-
-                        }>
+                        <MenuItemLinks to={item.path}>
                             {item.icon}
                             <span style={{ marginLeft: '16px' }}>{item.title}</span>
                         </MenuItemLinks>
@@ -75,9 +67,9 @@ const Home: React.FunctionComponent = () => {
             <SidebarBottom>
                 <Row>
                     <Col>
-                    <Image src={JSON.parse(localStorage.getItem('user') ?? '{}').photoURL} roundedCircle style={{ width: '50px', height: '50px', marginLeft: '16px' }} />
-                    <span style={{ marginLeft: '16px', color: 'white' }}>{JSON.parse(localStorage.getItem('user') ?? '{}').displayName}</span>
-                    <Button variant="outline-light" style={{ marginLeft: '16px', marginTop: '1rem' }} onClick={() => { localStorage.removeItem('user'); window.location.reload() }}>Logout</Button>
+                        <Image src={JSON.parse(localStorage.getItem('user') ?? '{}').photoURL} roundedCircle style={{ width: '50px', height: '50px', marginLeft: '16px' }} />
+                        <span style={{ marginLeft: '16px', color: 'white' }}>{JSON.parse(localStorage.getItem('user') ?? '{}').displayName}</span>
+                        <Button variant="outline-light" style={{ marginLeft: '16px', marginTop: '1rem' }} onClick={() => { localStorage.removeItem('user'); window.location.reload() }}>Logout</Button>
                     </Col>
                 </Row>
             </SidebarBottom >

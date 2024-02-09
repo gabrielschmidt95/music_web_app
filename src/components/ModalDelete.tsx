@@ -3,7 +3,9 @@ import { Modal, Button } from 'react-bootstrap'
 
 const ModalDelete = ({ albumInfo, showModalDelete, handleCloseModalDelete, removeAlbum }: {
     albumInfo: Album,
-    showModalDelete: boolean, handleCloseModalDelete: () => void, removeAlbum: (album: Album) => void
+    showModalDelete: boolean,
+    handleCloseModalDelete: () => void,
+    removeAlbum: (album: Album) => void
 
 }) => {
 
@@ -13,7 +15,22 @@ const ModalDelete = ({ albumInfo, showModalDelete, handleCloseModalDelete, remov
                 <Modal.Title>Deletar Album</Modal.Title>
             </Modal.Header>
             <Modal.Body>
-                <p>Tem certeza que deseja deletar o album {albumInfo?.title} de {albumInfo?.artist}?</p>
+                <p>
+                    Tem certeza que deseja deletar o album:
+                </p>
+                <p>
+                    Titulo:
+                </p>
+                <h4>
+                    {albumInfo?.title}
+                </h4>
+                <hr />
+                <p>
+                    Artista:
+                </p>
+                <h4>
+                    {albumInfo?.artist}
+                </h4>
             </Modal.Body>
             <Modal.Footer>
                 <Button variant="danger" onClick={

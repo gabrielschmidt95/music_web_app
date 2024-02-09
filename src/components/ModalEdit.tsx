@@ -5,8 +5,10 @@ import Artists from '../services/Artists'
 import { HandleAlbum } from '../services/Albuns';
 
 const ModalDelete = ({ showModal, modalType, albumInfo, handleCloseModal, refreshArtists }: {
-    modalType: string, albumInfo: AlbumData,
-    showModal: boolean, handleCloseModal: () => void,
+    showModal: boolean, 
+    modalType: string, 
+    albumInfo: AlbumData,
+    handleCloseModal: () => void,
     refreshArtists?: (artist: string) => void
 }) => {
     const [setFieldsNA, setSetFieldsNA] = useState(false);
