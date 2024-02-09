@@ -3,9 +3,12 @@ import { Image, ListGroup, Row, Col, Container, Button, Badge } from 'react-boot
 import DateTimeFormat from '../services/Utils';
 
 const SelectArtist = ({ albumInfo, handleShowModal, setModalType, handleShowModalDelete, handleShowModalFixDiscogs }: {
-    albumInfo: Album | undefined, handleShowModal: () => void, setModalType: (type: string) => void, handleShowModalDelete: () => void, handleShowModalFixDiscogs: () => void
+    albumInfo: Album | undefined, handleShowModal: () => void, 
+    setModalType: (type: string) => void, 
+    handleShowModalDelete: () => void, 
+    handleShowModalFixDiscogs: () => void
 }) => {
-    if (albumInfo === undefined) {
+    if (albumInfo === undefined || albumInfo.title === '') {
         return (
             <Container style={
                 {

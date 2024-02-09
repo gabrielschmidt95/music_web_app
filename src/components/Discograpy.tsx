@@ -1,10 +1,9 @@
 import { Container, Row, Col, Card } from 'react-bootstrap'
 import AlbumData from '../models/Album'
 
-const ModalDelete = ({ albuns, setAlbumInfo, setFormValues }: {
+const ModalDelete = ({ albuns, setAlbumInfo }: {
     albuns: AlbumData[],
-    setAlbumInfo: Function,
-    setFormValues: Function
+    setAlbumInfo: Function
 }) => {
     if (albuns === undefined) {
         return (
@@ -41,7 +40,6 @@ const ModalDelete = ({ albuns, setAlbumInfo, setFormValues }: {
                             onClick={
                                 () => {
                                     setAlbumInfo(item)
-                                    setFormValues(item)
                                 }
                             }>
                             <Card.Img variant="top" src={item.discogs.cover_image} style={{ width: '18rem', height: '18rem', paddingLeft: '1rem', paddingTop: '1rem' }} />

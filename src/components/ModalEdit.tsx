@@ -2,14 +2,64 @@ import { Modal, Button, Form } from 'react-bootstrap'
 import { useState } from 'react';
 import AlbumData from '../models/Album';
 import Artists from '../services/Artists'
+import { HandleAlbum } from '../services/Albuns';
 
-const ModalDelete = ({ showModal, handleCloseModal, validated, handleSubmit, modalType, albumInfo, handleInputChange, artist }: {
-    showModal: boolean, handleCloseModal: () => void, validated: boolean,
-    handleSubmit: (event: React.FormEvent<HTMLFormElement>) => void, modalType: string, albumInfo: AlbumData,
-    handleInputChange: (field: string, value: any) => void, artist: any
+const ModalDelete = ({ showModal, modalType, albumInfo, handleCloseModal, refreshArtists }: {
+    modalType: string, albumInfo: AlbumData,
+    showModal: boolean, handleCloseModal: () => void,
+    refreshArtists?: (artist: string) => void
 }) => {
     const [setFieldsNA, setSetFieldsNA] = useState(false);
     const [newArtist, setNewArtist] = useState(false);
+    const [validated, setValidated] = useState(false);
+
+    const handleInputChange = (title: string, event: any) => {
+        setFormValues({ ...formValues, [title]: event });
+    }
+
+    const [formValues, setFormValues] = useState({
+        title: '',
+        artist: '',
+        releaseYear: 0,
+        origin: '',
+        purchase: '',
+        media: 'CD',
+        editionYear: 0,
+        ifpiMastering: '',
+        ifpiMould: '',
+        barcode: '',
+        matriz: '',
+        lote: '',
+        obs: ''
+    });
+
+    const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+        const form = event.currentTarget;
+
+        if (form.checkValidity() === false) {
+            event.preventDefault();
+            event.stopPropagation();
+            setValidated(false);
+            return;
+        }
+        event.preventDefault();
+        setValidated(true);
+
+        if (formValues.artist === '' || formValues.artist === undefined || formValues.artist === null) {
+            if (albumInfo.artist === '' || albumInfo.artist === undefined || albumInfo.artist === null) {
+                setValidated(false);
+                return;
+            }
+            formValues.artist = albumInfo.artist;
+        }
+
+        HandleAlbum(formValues as AlbumData).then((_) => {
+            handleCloseModal();
+            if (refreshArtists !== undefined) {
+                refreshArtists(formValues.artist);
+            }
+        });
+    }
 
     return (
         <Modal show={showModal} onHide={handleCloseModal}>
@@ -53,7 +103,7 @@ const ModalDelete = ({ showModal, handleCloseModal, validated, handleSubmit, mod
                             onChange={
                                 (e) => handleInputChange('artist', e.target.value)
                             }
-                            defaultValue={artist?.value}
+                            defaultValue={albumInfo?.artist}
                         >
                             <option value={""}>Selecione o Artista</option>
                             {Artists().map((item, _) => (
@@ -90,6 +140,7 @@ const ModalDelete = ({ showModal, handleCloseModal, validated, handleSubmit, mod
                     <Form.Group className="mb-3" controlId="editForm.ControlInput4">
                         <Form.Label>Origem</Form.Label>
                         <Form.Control
+                            required
                             type="text"
                             defaultValue={albumInfo?.origin}
                             onChange={

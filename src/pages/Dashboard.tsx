@@ -2,10 +2,9 @@ import React, { useState, useEffect } from 'react'
 import Totals from '../services/Totals'
 
 import TotalsData from '../models/Totals';
-import { Col, Row, Container, Table, Modal, Spinner, Card } from "react-bootstrap";
+import { Col, Row, Container, Table, Spinner, Card } from "react-bootstrap";
 import { Aggregate, FetchAlbumsByYearMetric, FetchAlbums, Find } from '../services/Albuns';
-
-import { FaRecordVinyl, FaCompactDisc } from "react-icons/fa";
+import ModalAlbum from '../components/ModalAlbuns';
 
 import {
     Chart as ChartJS,
@@ -404,54 +403,12 @@ const Dashboard: React.FunctionComponent = () => {
                     </Row>
                 </Col>
             </Container>
-            <Modal show={showModal} onHide={handleCloseModal} size="xl" >
-                <Modal.Header closeButton>
-                    <Modal.Title>
-                        <Row>
-                            <Col>
-                                <h1>Albums de {modalYear}</h1>
-                            </Col>
-                        </Row>
-                        <Row>
-                            <Col>
-                                <h2>Total: {modalValue ? modalValue.length : 0}</h2>
-                            </Col>
-                        </Row>
-                    </Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    <Table>
-                        <thead>
-                            <tr>
-                                <th></th>
-                                <th>Artista</th>
-                                <th>Album</th>
-                                <th>Media</th>
-                                <th>Data de Compra</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {
-                                modalValue ?
-                                    modalValue.map((album, _) => {
-                                        return <tr key={album.title + album.purchase}>
-                                            {
-                                                album.media.startsWith('VINIL') ? <td><FaRecordVinyl color='black' /></td> : <td><FaCompactDisc color='grey' /></td>
-                                            }
-                                            <td>{album.artist}</td>
-                                            <td>{album.release ? album.release + " - " + album.title : album.title}</td>
-                                            <td>{album.media}</td>
-                                            <td>{album.purchase ? album.purchase.split("-")[2] + "/" + album.purchase.split("-")[1] + "/" + album.purchase.split("-")[0] : ""}</td>
-                                        </tr>
-                                    }) : <tr><td><Spinner animation="border" /></td></tr>
-                            }
-                        </tbody>
-                    </Table>
-                </Modal.Body>
-                <Modal.Footer>
-                    Vinil: <FaRecordVinyl color='black' /> CD: <FaCompactDisc color='grey' />
-                </Modal.Footer>
-            </Modal>
+            <ModalAlbum
+                modalValue={modalValue as Record<string, string>[]}
+                showModal={showModal}
+                modalYear={modalYear ? modalYear.toString() : ""}
+                handleCloseModal={handleCloseModal}
+            />
         </>
     )
 }

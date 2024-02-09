@@ -2,9 +2,10 @@ import React, { useState } from 'react'
 import { Row, Col, Container, Button } from 'react-bootstrap';
 
 import AlbumData from '../models/Album'
+import Artist from '../models/Artist'
 
 import Artists from '../services/Artists'
-import { FetchAlbums, HandleAlbum, RemoveAlbum, UpdateDiscogs } from '../services/Albuns';
+import { FetchAlbums, RemoveAlbum, UpdateDiscogs } from '../services/Albuns';
 
 import SelectArtist from '../components/SelectArtists';
 import AlbumInfo from '../components/AlbumInfo';
@@ -17,7 +18,7 @@ import Alert from '../components/Alert';
 const Home: React.FunctionComponent = () => {
     const [albuns, setAlbuns] = useState<AlbumData[]>();
     const [albumInfo, setAlbumInfo] = useState<AlbumData>();
-    const [artist, setArtist] = useState<{ value: string; label: string; }>();
+    const [artist, setArtist] = useState<Artist>();
 
     const [showModal, setShowModal] = useState(false);
     const handleCloseModal = () => setShowModal(false);
@@ -36,46 +37,22 @@ const Home: React.FunctionComponent = () => {
 
     const [modalType, setModalType] = useState<string>("None");
 
-    const [validated, setValidated] = useState(false);
     const [validatedFixDiscogs, setValidatedFixDiscogs] = useState(false);
     const [fixDiscogs, setFixDiscogs] = useState<string>('');
-
-    const [formValues, setFormValues] = useState({
-        title: '',
-        artist: '',
-        releaseYear: 0,
-        origin: '',
-        purchase: '',
-        media: 'CD',
-        editionYear: 0,
-        ifpiMastering: '',
-        ifpiMould: '',
-        barcode: '',
-        matriz: '',
-        lote: '',
-        obs: ''
-    });
 
     function clearContent() {
         setAlbuns(undefined);
         setAlbumInfo(undefined);
-        setArtist({ value: '', label: '' });
+        setArtist(undefined);
     }
-    function clearForm() {
-        setFormValues({
-            title: '',
-            artist: '',
-            releaseYear: 0,
-            origin: '',
-            purchase: '',
-            media: 'CD',
-            editionYear: 0,
-            ifpiMastering: '',
-            ifpiMould: '',
-            barcode: '',
-            matriz: '',
-            lote: '',
-            obs: ''
+
+    function refreshArtists(artist: string) {
+        clearContent();
+        handleCloseModal();
+        setShowAlert(true);
+        setArtist({ id: artist, name: artist });
+        FetchAlbums(artist).then((data) => {
+            setAlbuns(data)
         });
     }
 
@@ -84,40 +61,8 @@ const Home: React.FunctionComponent = () => {
             clearContent();
             setAlbuns(undefined);
             setAlbumInfo(undefined);
-            setArtist({ value: albumInfo.artist, label: albumInfo.artist });
             handleCloseModalDelete();
             FetchAlbums(albumInfo.artist).then((data) => {
-                setAlbuns(data)
-            });
-        });
-    }
-
-    const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-        const form = event.currentTarget;
-
-        if (form.checkValidity() === false) {
-            event.preventDefault();
-            event.stopPropagation();
-            return;
-        }
-        event.preventDefault();
-        setValidated(true);
-
-        if (formValues.artist === '' || formValues.artist === undefined || formValues.artist === null) {
-            if (artist !== undefined && artist.value !== '') {
-                formValues.artist = artist.value;
-            } else {
-                event.preventDefault();
-                event.stopPropagation();
-                return;
-            }
-        }
-        HandleAlbum(formValues as AlbumData).then((data) => {
-            clearContent();
-            handleCloseModal();
-            setArtist({ value: formValues.artist, label: formValues.artist });
-            setShowAlert(true);
-            FetchAlbums(formValues.artist).then((data) => {
                 setAlbuns(data)
             });
         });
@@ -136,19 +81,10 @@ const Home: React.FunctionComponent = () => {
         handleCloseModalFixDiscogs();
     }
 
-    const handleInputChange = (title: string, event: any) => {
-        setFormValues({ ...formValues, [title]: event });
-    }
-
     const handleSelectArtist = (item: { id: string; name: string; }) => {
         setAlbuns(undefined);
         setAlbumInfo(undefined);
-        setArtist(
-            {
-                value: item.id,
-                label: item.name
-            }
-        );
+        setArtist({ id: item.name, name: item.name });
         FetchAlbums(item.name).then((data) => {
             setAlbuns(data)
         });
@@ -158,7 +94,15 @@ const Home: React.FunctionComponent = () => {
         <>
             <Alert showAlert={showAlert} setShowAlert={setShowAlert} />
             <h2 style={{ textAlign: 'center' }}>Gerenciador de Albuns</h2>
-            <Container fluid >
+            <Container fluid style={
+                {
+                    padding: '1rem',
+                    height: '95vh',
+                    borderRadius: '1rem',
+                    boxShadow: '0 4px 8px 0 rgba(0,0,0,0.2)',
+                }
+
+            }>
                 <Row>
                     <Col xs={2}>
                         <SelectArtist
@@ -179,8 +123,22 @@ const Home: React.FunctionComponent = () => {
                             }
                             onClick={
                                 () => {
-                                    setAlbumInfo(undefined);
-                                    clearForm();
+                                    setAlbumInfo(
+                                        {
+                                            id: '',
+                                            title: '',
+                                            artist: artist?.name as string,
+                                            discogs: {
+                                                cover_image: '',
+                                                uri: ''
+                                            },
+                                            spotify: {
+                                                external_urls: {
+                                                    spotify: ''
+                                                }
+                                            }
+                                        } as AlbumData
+                                    );
                                     setModalType('Adicionar Album')
                                     handleShowModal();
                                 }
@@ -193,7 +151,6 @@ const Home: React.FunctionComponent = () => {
                         <Discograpy
                             albuns={albuns as AlbumData[]}
                             setAlbumInfo={setAlbumInfo}
-                            setFormValues={setFormValues}
                         />
                     </Col>
                     <Col>
@@ -211,11 +168,8 @@ const Home: React.FunctionComponent = () => {
                 albumInfo={albumInfo as AlbumData}
                 showModal={showModal}
                 handleCloseModal={handleCloseModal}
-                handleSubmit={handleSubmit}
-                validated={validated}
-                handleInputChange={handleInputChange}
-                artist={artist}
                 modalType={modalType}
+                refreshArtists={refreshArtists}
             />
             <ModalFixDiscogs
                 showModalFixDiscogs={showModalFixDiscogs}
