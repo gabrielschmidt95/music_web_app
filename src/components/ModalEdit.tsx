@@ -16,24 +16,11 @@ const ModalDelete = ({ showModal, modalType, albumInfo, handleCloseModal, refres
     const [validated, setValidated] = useState(false);
 
     const handleInputChange = (title: string, event: any) => {
-        setFormValues({ ...formValues, [title]: event });
+        albumInfo = {
+            ...albumInfo,
+            [title]: event
+        }
     }
-
-    const [formValues, setFormValues] = useState({
-        title: '',
-        artist: '',
-        releaseYear: 0,
-        origin: '',
-        purchase: '',
-        media: 'CD',
-        editionYear: 0,
-        ifpiMastering: '',
-        ifpiMould: '',
-        barcode: '',
-        matriz: '',
-        lote: '',
-        obs: ''
-    });
 
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         const form = event.currentTarget;
@@ -47,18 +34,12 @@ const ModalDelete = ({ showModal, modalType, albumInfo, handleCloseModal, refres
         event.preventDefault();
         setValidated(true);
 
-        if (formValues.artist === '' || formValues.artist === undefined || formValues.artist === null) {
-            if (albumInfo.artist === '' || albumInfo.artist === undefined || albumInfo.artist === null) {
-                setValidated(false);
-                return;
-            }
-            formValues.artist = albumInfo.artist;
-        }
 
-        HandleAlbum(formValues as AlbumData).then((_) => {
+        console.log(albumInfo);
+        HandleAlbum(albumInfo).then((_) => {
             handleCloseModal();
             if (refreshArtists !== undefined) {
-                refreshArtists(formValues.artist);
+                refreshArtists(albumInfo.artist);
             }
         });
     }
