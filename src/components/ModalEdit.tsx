@@ -5,8 +5,8 @@ import Artists from '../services/Artists'
 import { HandleAlbum } from '../services/Albuns';
 
 const ModalDelete = ({ showModal, modalType, albumInfo, handleCloseModal, refreshArtists }: {
-    showModal: boolean, 
-    modalType: string, 
+    showModal: boolean,
+    modalType: string,
     albumInfo: AlbumData,
     handleCloseModal: () => void,
     refreshArtists?: (artist: string) => void
@@ -94,7 +94,7 @@ const ModalDelete = ({ showModal, modalType, albumInfo, handleCloseModal, refres
                             ))}
                         </Form.Select>
 
-                        <Form.Check
+                        {modalType != 'Editar Album' ? <Form.Check
                             type="checkbox"
                             id="editForm.ControlInput2"
                             label="Novo Artista"
@@ -107,7 +107,7 @@ const ModalDelete = ({ showModal, modalType, albumInfo, handleCloseModal, refres
                                     }
                                 }
                             }
-                        />
+                        /> : <></>}
                     </Form.Group>
                     <Form.Group className="mb-3" controlId="editForm.ControlInput3">
                         <Form.Label>Ano</Form.Label>
