@@ -9,7 +9,9 @@ interface Discogs {
     title: string,
     thumb: string,
     cover_image: string,
+    format: string[],
     resource_url: string,
+    year: string,
     format_quantity: number,
     urls: [
         {

@@ -80,7 +80,10 @@ async function HandleAlbum(album: AlbumData) {
     }
 
     if (album.discogs === undefined || album.discogs === null || album.discogs.id === 0) {
-        album.discogs = await GetDiscogs(album);
+        const discogs = await GetDiscogs(album);
+        if (discogs.length > 0) {
+            album.discogs = discogs[0];
+        }
     }
 
     const requestOptions = {
@@ -228,5 +231,6 @@ export {
     FetchAlbumsByYearMetric,
     FetchAlbumByTitle,
     Aggregate,
-    Find
+    Find,
+    GetDiscogs
 }

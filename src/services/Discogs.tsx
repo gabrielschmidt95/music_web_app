@@ -2,7 +2,7 @@ import AlbumData from '../models/Album';
 import DiscogsData from '../models/Discogs';
 
 
-const tokenDiscogs = process.env.REACT_APP_DISCOGS_TOKEN;
+const tokenDiscogs = process.env.REACT_APP_DISCOGS_TOKEN as string;
 
 function objToQueryString(obj: { [key: string]: any }) {
     const keyValuePairs = [];
@@ -28,13 +28,20 @@ async function getTracks(data: DiscogsData): Promise<any> {
     return result["tracklist"];
 }
 
-async function GetDiscogs(album: AlbumData) {
-    let queryParameters = {
+async function GetDiscogs(album: AlbumData): Promise<DiscogsData[]> {
+    let queryParameters: Record<string, string> = {
         "token": tokenDiscogs,
         "artist": album.artist,
         "release_title": album.title,
         "barcode": album.barcode
     };
+
+    Object.keys(queryParameters).forEach(key => {
+        if (queryParameters[key] === undefined) {
+            delete queryParameters[key];
+        }
+    });
+
     const response = await fetchDiscogs(queryParameters);
 
     if (response.status === 200) {
@@ -52,19 +59,21 @@ async function GetDiscogs(album: AlbumData) {
             dataFiltered = dataFiltered["results"];
 
             if (dataFiltered.isEmpty) {
-                return {} as DiscogsData;
+                return [] as DiscogsData[];
             }
             data = dataFiltered;
         }
         if (data === undefined) {
-            return {} as DiscogsData;
+            return [] as DiscogsData[];
+        }
+        
+        let discogsData = data as DiscogsData[];
+
+        if (discogsData === undefined) {
+            return [] as DiscogsData[];
         }
 
-        let discogsData = data[0] as DiscogsData;
-        if (discogsData === undefined) {
-            return {} as DiscogsData;
-        }
-        discogsData.len = data.length;
+        const tracks = await getTracks(discogsData[0]);
         let urlsList: [{ id: number, uri: string }] = [] as any;
         for (const item of data) {
             urlsList.push({
@@ -72,13 +81,16 @@ async function GetDiscogs(album: AlbumData) {
                 uri: item["uri"] as string
             });
         }
-        discogsData.urls = urlsList;
 
-        discogsData.tracks = await getTracks(discogsData);
+        discogsData.forEach((item) => {
+            item.len = data.length;
+            item.tracks = tracks;
+            item.urls = urlsList;
+        });
 
         return discogsData;
     } else {
-        return {} as DiscogsData;
+        return [] as DiscogsData[];
     }
 }
 
@@ -131,7 +143,7 @@ async function GetById(discogsId: string) {
         } as DiscogsData;
 
         discogsData.tracks = await getTracks(discogsData);
-        
+
         return discogsData;
     } catch (error) {
         console.error(error);
