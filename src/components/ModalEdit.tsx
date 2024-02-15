@@ -48,12 +48,24 @@ const ModalEdit = ({ showModal, modalType, albumInfo, handleCloseModal, refreshA
         const form = event.currentTarget;
 
         if (form.checkValidity() === false) {
+            alert('Preencha todos os campos');
+            event.preventDefault();
+            event.stopPropagation();
+            return;
+        }
+        if (album.artist === undefined){
+            alert('Selecione um artista');
+            event.preventDefault();
+            event.stopPropagation();
+            return;
+        }
+        if (album.title === undefined || album.title === '' || album.title.replace(/\s/g, "") === ''){
+            alert('Preencha o titulo');
             event.preventDefault();
             event.stopPropagation();
             return;
         }
         event.preventDefault();
-
         GetDiscogs(album).then((data) => {
             setDiscogsData(data);
             if (data.length === 1 || data.length === 0) {
@@ -116,12 +128,13 @@ const ModalEdit = ({ showModal, modalType, albumInfo, handleCloseModal, refreshA
                                 }
                                 defaultValue={album?.artist}
                             >
+                                <option value={""}>Selecione o Artista</option>
                                 {Artists().map((item, _) => (
                                     <option key={item.name}>{item.name}</option>
                                 ))}
                             </Form.Select>
 
-                            {modalType !== 'Editar Album' ? <Form.Check
+                            {modalType != 'Editar Album' ? <Form.Check
                                 type="checkbox"
                                 id="editForm.ControlInput2"
                                 label="Novo Artista"
