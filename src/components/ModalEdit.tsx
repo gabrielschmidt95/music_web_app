@@ -33,7 +33,6 @@ const ModalEdit = ({ showModal, modalType, albumInfo, handleCloseModal, refreshA
 
     const setDiscogsChoose = (value: DiscogsData) => {
         album.discogs = value;
-        console.log(album);
         handleCloseModalDiscogsChoose();
         HandleAlbum(album).then((_) => {
             handleCloseModal();

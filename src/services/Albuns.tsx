@@ -33,7 +33,6 @@ async function FetchAlbums(artist: string): Promise<AlbumData[]> {
     if (data === null) {
         return [];
     }
-    console.log(data);
     data.sort((a, b) => {
         if (a.releaseYear < b.releaseYear) {
             return -1;
