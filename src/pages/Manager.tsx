@@ -74,11 +74,22 @@ const Home: React.FunctionComponent = () => {
             event.preventDefault();
             event.stopPropagation();
         }
+        if (albumInfo === undefined) {
+            return;
+        }
         event.preventDefault();
         setValidatedFixDiscogs(true);
-        UpdateDiscogs(fixDiscogs, albumInfo as AlbumData);
-        clearContent();
-        handleCloseModalFixDiscogs();
+        UpdateDiscogs(fixDiscogs, albumInfo).then((v) => {
+            if (v == undefined) {
+                alert("Não encontrado no Discogs");
+            }
+            clearContent();
+            handleCloseModalFixDiscogs();
+            FetchAlbums(albumInfo.artist).then((data) => {
+                setAlbuns(data)
+            });
+        });
+
     }
 
     const handleSelectArtist = (item: { id: string; name: string; }) => {
@@ -142,7 +153,7 @@ const Home: React.FunctionComponent = () => {
                                     setModalType('Adicionar Album')
                                     handleShowModal();
                                 }
-                            }>Adicionar Album</Button>
+                            }>Adicionar</Button>
                     </Col>
                 </Row>
                 <br />

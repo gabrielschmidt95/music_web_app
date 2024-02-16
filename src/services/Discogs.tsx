@@ -69,7 +69,7 @@ async function GetDiscogs(album: AlbumData): Promise<DiscogsData[]> {
         
         let discogsData = data as DiscogsData[];
 
-        if (discogsData === undefined) {
+        if (discogsData === undefined || discogsData.length === 0) {
             return [] as DiscogsData[];
         }
 

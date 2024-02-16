@@ -3,9 +3,9 @@ import { Image, ListGroup, Row, Col, Container, Button, Badge } from 'react-boot
 import DateTimeFormat from '../services/Utils';
 
 const SelectArtist = ({ albumInfo, handleShowModal, setModalType, handleShowModalDelete, handleShowModalFixDiscogs }: {
-    albumInfo: Album | undefined, handleShowModal: () => void, 
-    setModalType: (type: string) => void, 
-    handleShowModalDelete: () => void, 
+    albumInfo: Album | undefined, handleShowModal: () => void,
+    setModalType: (type: string) => void,
+    handleShowModalDelete: () => void,
     handleShowModalFixDiscogs: () => void
 }) => {
     if (albumInfo === undefined || albumInfo.title === '') {
@@ -25,7 +25,8 @@ const SelectArtist = ({ albumInfo, handleShowModal, setModalType, handleShowModa
                 padding: '1rem',
                 height: '85vh',
                 boxShadow: '0 4px 8px 0 rgba(0,0,0,0.2)',
-                borderRadius: '1rem'
+                borderRadius: '1rem',
+                overflowY: 'auto',
             }
         }>
             <h1>Informações do Album</h1>
@@ -125,11 +126,11 @@ const SelectArtist = ({ albumInfo, handleShowModal, setModalType, handleShowModa
                         }
 
                     }>
-                        {albumInfo.discogs.tracks ? albumInfo.discogs.tracks.map((item, _) => (
+                        {albumInfo.discogs.tracks ? albumInfo.discogs.tracks.map((item, idx) => (
                             <ListGroup.Item
                                 as="li"
                                 className="d-flex justify-content-between align-items-start"
-                                key={item.title}
+                                key={item.title + item.position + idx.toString()}
                             >
                                 <div className="ms-2 me-auto">
                                     <div className="fw-bold">{item.title}</div>

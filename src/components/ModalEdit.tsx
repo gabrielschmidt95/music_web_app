@@ -1,5 +1,5 @@
 import { Modal, Button, Form } from 'react-bootstrap'
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import AlbumData from '../models/Album';
 import Artists from '../services/Artists'
 import { HandleAlbum, GetDiscogs } from '../services/Albuns';
@@ -23,8 +23,11 @@ const ModalEdit = ({ showModal, modalType, albumInfo, handleCloseModal, refreshA
     const handleShowModalDiscogsChoose = () => setShowModalDiscogsChoose(true);
     const handleCloseModalDiscogsChoose = () => setShowModalDiscogsChoose(false);
 
+    useEffect(() => {
+        setAlbum(albumInfo);
+    }, [albumInfo]);
 
-    const handleInputChange = (title: string, event: any) => {
+    function handleInputChange(title: string, event: any) {
         setAlbum({
             ...album,
             [title]: event
@@ -34,6 +37,10 @@ const ModalEdit = ({ showModal, modalType, albumInfo, handleCloseModal, refreshA
     const setDiscogsChoose = (value: DiscogsData) => {
         album.discogs = value;
         handleCloseModalDiscogsChoose();
+        handleSave(album);
+    }
+
+    const handleSave = (album: AlbumData) => {
         HandleAlbum(album).then((_) => {
             handleCloseModal();
             if (refreshArtists !== undefined) {
@@ -52,34 +59,34 @@ const ModalEdit = ({ showModal, modalType, albumInfo, handleCloseModal, refreshA
             event.stopPropagation();
             return;
         }
-        if (album.artist === undefined){
+
+        if (album.artist === undefined) {
             alert('Selecione um artista');
             event.preventDefault();
             event.stopPropagation();
             return;
         }
-        if (album.title === undefined || album.title === '' || album.title.replace(/\s/g, "") === ''){
+
+        if (album.title === undefined || album.title === '' || album.title.replace(/\s/g, "") === '') {
             alert('Preencha o titulo');
             event.preventDefault();
             event.stopPropagation();
             return;
         }
-        event.preventDefault();
-        GetDiscogs(album).then((data) => {
-            setDiscogsData(data);
-            if (data.length === 1 || data.length === 0) {
-                HandleAlbum(album).then((_) => {
-                    handleCloseModal();
-                    if (refreshArtists !== undefined) {
-                        refreshArtists(album.artist);
-                    }
-                });
-                setAlbum(albumInfo);
-            } else {
-                handleShowModalDiscogsChoose();
-            }
-        })
 
+        if (album.discogs === undefined || album.discogs === null || album.discogs.id === 0) {
+            GetDiscogs(album).then((data) => {
+                setDiscogsData(data);
+                console.log(album);
+                if (data.length === 1 || data.length === 0) {
+                    handleSave(album);
+                } else {
+                    handleShowModalDiscogsChoose();
+                }
+            });
+        } else {
+            handleSave(album);
+        }
     }
 
     return (
@@ -133,7 +140,7 @@ const ModalEdit = ({ showModal, modalType, albumInfo, handleCloseModal, refreshA
                                 ))}
                             </Form.Select>
 
-                            {modalType != 'Editar Album' ? <Form.Check
+                            {modalType !== 'Editar Album' ? <Form.Check
                                 type="checkbox"
                                 id="editForm.ControlInput2"
                                 label="Novo Artista"

@@ -10,7 +10,7 @@ const ModalDelete = ({ albuns, setAlbumInfo }: {
             <Container style={
                 {
                     padding: '1rem',
-                    height: '85vh',
+                    height: '85%',
                 }
             }>
             </Container>
@@ -26,7 +26,7 @@ const ModalDelete = ({ albuns, setAlbumInfo }: {
                 borderRadius: '1rem'
             }
         }>
-            <Row md="auto">
+            <Row>
                 {albuns.map((item, _) => (
                     <Col key={item.id} style={{ padding: '1rem' }}>
                         <Card style={

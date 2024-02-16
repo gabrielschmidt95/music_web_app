@@ -79,24 +79,19 @@ async function HandleAlbum(album: AlbumData) {
         album.spotify = await FetchSpotify(album.artist, album.title);
     }
 
-    if (album.discogs === undefined || album.discogs === null || album.discogs.id === 0) {
-        const discogs = await GetDiscogs(album);
-        if (discogs.length > 0) {
-            album.discogs = discogs[0];
-        }
-    }
-
     const requestOptions = {
         method: 'POST',
         headers: await getHeader(),
         body: JSON.stringify(album)
     };
     let response = await fetch(uri, requestOptions);
+
     if (response.status === 401) {
         await Token();
         token = sessionStorage.getItem("token");
         await fetch(uri, requestOptions);
     }
+    return response;
 
 }
 
@@ -117,8 +112,16 @@ async function RemoveAlbum(id: string) {
 }
 
 async function UpdateDiscogs(discogsId: string, album: AlbumData) {
-    album.discogs = await GetById(discogsId);
-    await HandleAlbum(album);
+    if (discogsId === "0") {
+        return await HandleAlbum(album);
+    }
+    
+    const discogs = await GetById(discogsId);
+    if (discogs.id === undefined) {
+        return;
+    }
+    album.discogs = discogs;
+    return await HandleAlbum(album);
 }
 
 function sortYearData(data: Record<string, string>[], metric: string): Record<string, string>[] {
