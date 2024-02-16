@@ -43,15 +43,25 @@ const ArtistList: React.FunctionComponent = () => {
                     {
                         padding: '1rem',
                         height: '90vh',
-                        overflowY: 'auto',
                         boxShadow: '0 4px 8px 0 rgba(0,0,0,0.2)',
                         borderRadius: '1rem'
                     }
                 }>
                 <Row>
-                    {
-                        top10Artists?.map((artist, _) => {
-                            return (
+                    <Col xs={5}
+                        style={
+                            {
+                                padding: '1rem',
+                                height: '85vh',
+                                overflowY: 'auto',
+                                boxShadow: '0 4px 8px 0 rgba(0,0,0,0.2)',
+                                borderRadius: '1rem',
+                                margin: '1rem'
+                            }
+                        }>
+                        {
+                            top10Artists?.map((artist, _) => {
+                                return (
                                     <Col key={artist._id} style={{ padding: '1rem' }} xs={12}>
                                         <Card
                                             style={
@@ -82,14 +92,27 @@ const ArtistList: React.FunctionComponent = () => {
                                                                 <FaSpotify /> {spotify.name}
                                                             </Card.Link>
                                                         </Col>
-                                                    }) : <> </>
+                                                    }) : <><FaSpotify /> No Spotify</>
                                                 }
                                             </Card.Body>
                                         </Card>
                                     </Col>
                                 )
                             })
-                    }
+                        }
+                    </Col>
+                    <Col xs={6}
+                        style={
+                            {
+                                padding: '1rem',
+                                height: '85vh',
+                                overflowY: 'auto',
+                                boxShadow: '0 4px 8px 0 rgba(0,0,0,0.2)',
+                                borderRadius: '1rem',
+                                margin: '1rem'
+                            }
+                        }>
+                    </Col>
                 </Row>
             </Container>
         </>
