@@ -52,24 +52,21 @@ const ModalEdit = ({ showModal, modalType, albumInfo, handleCloseModal, refreshA
 
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         const form = event.currentTarget;
-
+        event.preventDefault();
         if (form.checkValidity() === false) {
             alert('Preencha todos os campos');
-            event.preventDefault();
             event.stopPropagation();
             return;
         }
 
         if (album.artist === undefined) {
             alert('Selecione um artista');
-            event.preventDefault();
             event.stopPropagation();
             return;
         }
 
         if (album.title === undefined || album.title === '' || album.title.replace(/\s/g, "") === '') {
             alert('Preencha o titulo');
-            event.preventDefault();
             event.stopPropagation();
             return;
         }
