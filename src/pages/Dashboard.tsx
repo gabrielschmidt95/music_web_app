@@ -168,6 +168,7 @@ const Dashboard: React.FunctionComponent = () => {
                         </Col>
                     </Row>
                     <br />
+                    <h2 style={{ textAlign: 'center' }}>Totais</h2>
                     <Row
                         style={
                             {
@@ -176,14 +177,15 @@ const Dashboard: React.FunctionComponent = () => {
                                 borderRadius: '1rem',
                             }
                         }
+                        md="auto"
                     >
-                        <h2 style={{ textAlign: 'center' }}>Totais</h2>
-                        <Col>
+                        <Col md="auto">
                             <Card style={{
-                                width: '18rem',
-                                height: '12rem',
+                                width: '100%',
+                                height: 'auto',
                                 boxShadow: '0 4px 8px 0 rgba(0,0,0,0.2)',
                                 borderRadius: '1rem',
+                                marginBottom: '2rem'
                             }}
                                 key={"totals"}>
                                 <Card.Body>
@@ -195,6 +197,12 @@ const Dashboard: React.FunctionComponent = () => {
                                                     <text x="50" y="55" textAnchor="middle" fontSize="36">{totalValue}</text>
                                                 </svg>
                                             </Col>
+                                            <Col>
+                                                <svg width="100" height="100">
+                                                    <circle cx="50" cy="50" r="40" stroke="green" strokeWidth="2" fill="none" />
+                                                    <text x="50" y="55" textAnchor="middle" fontSize="16">100%</text>
+                                                </svg>
+                                            </Col>
                                         </Row>
                                     </Container>
                                 </Card.Body>
@@ -203,13 +211,14 @@ const Dashboard: React.FunctionComponent = () => {
                         {
                             totals ? Object.keys(totals.media).map(key => {
                                 return (
-                                    <Col key={key + "col"}>
+                                    <Col key={key + "col"} md="auto">
                                         <Card key={key}
                                             style={{
-                                                width: '18rem',
-                                                height: '12rem',
+                                                width: '100%',
+                                                height: 'auto',
                                                 boxShadow: '0 4px 8px 0 rgba(0,0,0,0.2)',
                                                 borderRadius: '1rem',
+                                                marginBottom: '2rem'
                                             }}>
                                             <Card.Body>
                                                 <Card.Title>{key}</Card.Title>
@@ -234,6 +243,7 @@ const Dashboard: React.FunctionComponent = () => {
                             }) : <Col><Spinner animation="border" /></Col>
                         }
                     </Row>
+                    <br />
                     <Row>
                         <Col
                             style={{
@@ -263,7 +273,6 @@ const Dashboard: React.FunctionComponent = () => {
                                 }
                             }} />
                         </Col>
-
                         <Col
                             style={
                                 {
