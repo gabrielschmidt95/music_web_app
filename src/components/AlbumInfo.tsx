@@ -1,6 +1,7 @@
 import Album from '../models/Album'
 import { Image, ListGroup, Row, Col, Container, Button, Badge } from 'react-bootstrap'
 import DateTimeFormat from '../services/Utils';
+import * as FaIcons from 'react-icons/fa'
 
 const SelectArtist = ({ albumInfo, handleShowModal, setModalType, handleShowModalDelete, handleShowModalFixDiscogs }: {
     albumInfo: Album | undefined, handleShowModal: () => void,
@@ -34,6 +35,7 @@ const SelectArtist = ({ albumInfo, handleShowModal, setModalType, handleShowModa
                 <Col>
                     <Image src={albumInfo.discogs.cover_image}
                         alt='Capa do Album' thumbnail />
+                    <p>Discogs Fixado {albumInfo.discogs.len === 1 ? <FaIcons.FaCheckSquare></FaIcons.FaCheckSquare> : <FaIcons.FaTimes></FaIcons.FaTimes>} {albumInfo.discogs.len !== 1 ? albumInfo.discogs.len : ""}</p>
                 </Col>
                 <Col>
                     <ListGroup variant="flush">

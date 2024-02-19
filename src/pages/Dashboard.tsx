@@ -33,6 +33,7 @@ const Dashboard: React.FunctionComponent = () => {
     const [top10Artists, setTop10Artists] = useState<Record<string, number | string>[]>()
     const [albunsByCountry, setAlbunsByCountry] = useState<Record<string, number | string>[]>()
     const [noDiscogs, setNoDiscogs] = useState<Record<string, string>[]>([])
+    const [noFixed, setNoFixed] = useState<Record<string, string>[]>([])
 
     const [showModal, setShowModal] = useState(false);
     const handleCloseModal = () => setShowModal(false);
@@ -124,6 +125,22 @@ const Dashboard: React.FunctionComponent = () => {
             })
         }
     }, [noDiscogs])
+
+    useEffect(() => {
+        if (noFixed.length === 0) {
+            Find({ "DISCOGS.len": { "$gt": 1 } }).then((data) => {
+                let noFixedList: Record<string, string>[] = []
+                data.map((album, _) => {
+                    return noFixedList.push({
+                        "title": album.title as string,
+                        "artist": album.artist as string,
+                        "id": album.id as string,
+                    })
+                })
+                setNoFixed(noFixedList)
+            })
+        }
+    }, [noFixed])
 
     const purchaseByYearLabels = Object.keys(totals ? totals.buy : "")
     const purchaseByYear = {
@@ -400,6 +417,27 @@ const Dashboard: React.FunctionComponent = () => {
                                 <tbody>
                                     {
                                         noDiscogs.map((album, _) => {
+                                            return <tr key={album.id}>
+                                                <td>{album.artist}</td>
+                                                <td>{album.title}</td>
+                                            </tr>
+                                        })
+                                    }
+                                </tbody>
+                            </Table>
+                        </Col>
+                        <Col>
+                            <h2>Albuns sem Fixar</h2>
+                            <Table>
+                                <thead>
+                                    <tr>
+                                        <th>Artista</th>
+                                        <th>Album</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {
+                                        noFixed.map((album, _) => {
                                             return <tr key={album.id}>
                                                 <td>{album.artist}</td>
                                                 <td>{album.title}</td>

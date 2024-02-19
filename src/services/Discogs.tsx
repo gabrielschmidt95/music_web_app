@@ -83,7 +83,7 @@ async function GetDiscogs(album: AlbumData): Promise<DiscogsData[]> {
         }
 
         discogsData.forEach((item) => {
-            item.len = data.length;
+            item.len = 1;
             item.tracks = tracks;
             item.urls = urlsList;
         });
