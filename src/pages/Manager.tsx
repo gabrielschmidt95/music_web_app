@@ -13,7 +13,6 @@ import ModalDelete from '../components/ModalDelete';
 import ModalFixDiscogs from '../components/ModalFixDiscogs';
 import ModalEdit from '../components/ModalEdit';
 import Discograpy from '../components/Discograpy';
-import Alert from '../components/Alert';
 
 const Home: React.FunctionComponent = () => {
     const [albuns, setAlbuns] = useState<AlbumData[]>();
@@ -33,8 +32,6 @@ const Home: React.FunctionComponent = () => {
     const handleCloseModalDelete = () => setShowModalDelete(false);
     const handleShowModalDelete = () => setShowModalDelete(true);
 
-    const [showAlert, setShowAlert] = useState(false);
-
     const [modalType, setModalType] = useState<string>("None");
 
     const [validatedFixDiscogs, setValidatedFixDiscogs] = useState(false);
@@ -49,7 +46,7 @@ const Home: React.FunctionComponent = () => {
     function refreshArtists(artist: string) {
         clearContent();
         handleCloseModal();
-        setShowAlert(true);
+        alert(`Artista ${artist} atualizado!`);
         setArtist({ id: artist, name: artist });
         FetchAlbums(artist).then((data) => {
             setAlbuns(data)
@@ -80,7 +77,7 @@ const Home: React.FunctionComponent = () => {
         event.preventDefault();
         setValidatedFixDiscogs(true);
         UpdateDiscogs(fixDiscogs, albumInfo).then((v) => {
-            if (v == undefined) {
+            if (v === undefined) {
                 alert("Não encontrado no Discogs");
             }
             clearContent();
@@ -103,7 +100,6 @@ const Home: React.FunctionComponent = () => {
 
     return (
         <>
-            <Alert showAlert={showAlert} setShowAlert={setShowAlert} />
             <h2 style={{ textAlign: 'center' }}>Gerenciador de Albuns</h2>
             <Container fluid style={
                 {
@@ -188,6 +184,7 @@ const Home: React.FunctionComponent = () => {
                 handleCloseModalFixDiscogs={handleCloseModalFixDiscogs}
                 handleSubmitFixDiscogs={handleSubmitFixDiscogs}
                 setFixDiscogs={setFixDiscogs}
+                albumInfo={albumInfo as AlbumData}
             />
             <ModalDelete
                 albumInfo={albumInfo as AlbumData}

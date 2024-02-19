@@ -74,7 +74,6 @@ const ModalEdit = ({ showModal, modalType, albumInfo, handleCloseModal, refreshA
         if (album.discogs === undefined || album.discogs === null || album.discogs.id === 0 || album.discogs.cover_image === '') {
             GetDiscogs(album).then((data) => {
                 setDiscogsData(data);
-                console.log(album);
                 if (data.length === 1 || data.length === 0) {
                     handleSave(album);
                 } else {
