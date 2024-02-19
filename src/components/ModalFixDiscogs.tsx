@@ -12,7 +12,7 @@ const ModalDelete = ({ showModalFixDiscogs, validatedFixDiscogs, handleCloseModa
 }) => {
     const [discogsData, setDiscogsData] = useState<DiscogsData[]>();
     if (albumInfo === undefined || showModalFixDiscogs === false) {
-        if (discogsData && discogsData.length > 0) setDiscogsData([]);
+        if (discogsData && discogsData.length > 0) setDiscogsData(undefined);
         return <></>;
     }
     if (discogsData === undefined) {

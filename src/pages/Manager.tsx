@@ -80,6 +80,7 @@ const Home: React.FunctionComponent = () => {
             if (v === undefined) {
                 alert("Não encontrado no Discogs");
             }
+            alert("Atualizado com sucesso!");
             clearContent();
             handleCloseModalFixDiscogs();
             FetchAlbums(albumInfo.artist).then((data) => {
