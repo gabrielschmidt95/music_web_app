@@ -3,7 +3,7 @@ import Totals from '../services/Totals'
 
 import TotalsData from '../models/Totals';
 import { Col, Row, Container, Table, Spinner, Card } from "react-bootstrap";
-import { Aggregate, FetchAlbumsByYearMetric, FetchAlbums, Find } from '../services/Albuns';
+import { Aggregate, FetchAlbumsByYearMetric, FetchAlbums, Find, FindAndSort } from '../services/Albuns';
 import ModalAlbum from '../components/ModalAlbuns';
 
 import {
@@ -128,7 +128,16 @@ const Dashboard: React.FunctionComponent = () => {
 
     useEffect(() => {
         if (noFixed.length === 0) {
-            Find({ "DISCOGS.len": { "$gt": 1 } }).then((data) => {
+            FindAndSort({
+                "query": {
+                    "DISCOGS.len": {
+                        "$gt": 1
+                    }
+                },
+                "sort": {
+                    "ARTIST": 1
+                }
+            }).then((data) => {
                 let noFixedList: Record<string, string>[] = []
                 data.map((album, _) => {
                     return noFixedList.push({

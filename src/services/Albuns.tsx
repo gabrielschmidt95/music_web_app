@@ -226,6 +226,28 @@ async function Find(qyery: object): Promise<Record<string, number | string>[]> {
     return sortByArtist(data);
 }
 
+async function FindAndSort(qyery: object): Promise<Record<string, number | string>[]> {
+    const url = `https://${process.env.REACT_APP_API_DOMAIN}/findAndSort`
+    const requestOptions = {
+        method: 'POST',
+        headers: await getHeader(),
+        body: JSON.stringify(qyery)
+    };
+
+    let response = await fetch(url, requestOptions);
+    if (response.status === 401) {
+        await Token();
+        token = sessionStorage.getItem("token");
+        response = await fetch(url, requestOptions);
+    }
+    const data = await response.json() as Record<string, number>[];
+    if (data === null) {
+        return [];
+    }
+
+    return sortByArtist(data);
+}
+
 export {
     FetchAlbums,
     HandleAlbum,
@@ -235,5 +257,6 @@ export {
     FetchAlbumByTitle,
     Aggregate,
     Find,
-    GetDiscogs
+    GetDiscogs,
+    FindAndSort
 }
