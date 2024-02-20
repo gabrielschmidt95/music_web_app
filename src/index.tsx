@@ -6,7 +6,7 @@ import { BrowserRouter } from "react-router-dom";
 import { createRoot } from "react-dom/client";
 
 import Sidebar from './components/Sidebar';
-import { Row, Col, Container, Button, Spinner, Image } from 'react-bootstrap';
+import { Row, Col, Container, Spinner, Image } from 'react-bootstrap';
 import { Auth0Provider, useAuth0 } from '@auth0/auth0-react';
 import logo from './assets/music-collection-high-resolution-logo.png';
 
