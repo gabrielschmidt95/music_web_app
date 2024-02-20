@@ -248,6 +248,45 @@ async function FindAndSort(qyery: object): Promise<Record<string, number | strin
     return sortByArtist(data);
 }
 
+
+async function ExportCollection(): Promise<AlbumData[]> {
+    const url = `https://${process.env.REACT_APP_API_DOMAIN}/all`
+    const requestOptions = {
+        method: 'GET',
+        headers: await getHeader(),
+    };
+
+    let response = await fetch(url, requestOptions);
+    if (response.status === 401) {
+        await Token();
+        token = sessionStorage.getItem("token");
+        response = await fetch(url, requestOptions);
+    }
+    const data = await response.json() as AlbumData[];
+    if (data === null) {
+        return [];
+    }
+    data.sort((a, b) => {
+        if (a.releaseYear < b.releaseYear) {
+            return -1;
+        }
+        if (a.releaseYear > b.releaseYear) {
+            return 1;
+        }
+        return 0;
+    });
+    data.sort((a, b) => {
+        if (a.artist < b.artist) {
+            return -1;
+        }
+        if (a.artist > b.artist) {
+            return 1;
+        }
+        return 0;
+    });
+    return data;
+}
+
 export {
     FetchAlbums,
     HandleAlbum,
@@ -258,5 +297,6 @@ export {
     Aggregate,
     Find,
     GetDiscogs,
-    FindAndSort
+    FindAndSort,
+    ExportCollection
 }
