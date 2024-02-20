@@ -3,7 +3,7 @@ import Manager from './pages/Manager';
 import Dashboard from './pages/Dashboard';
 import ArtistList from './pages/Artirst';
 
-const Main = () => {
+const AppRoutes = () => {
   return (
     <Routes>
       <Route path='/' element={<Manager />} />
@@ -13,4 +13,4 @@ const Main = () => {
     </Routes>
   );
 }
-export default Main;
+export default AppRoutes;
