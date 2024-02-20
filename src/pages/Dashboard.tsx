@@ -193,8 +193,8 @@ const Dashboard: React.FunctionComponent = () => {
                             <h1 style={{ textAlign: 'center' }}>Dashboard</h1>
                         </Col>
                     </Row>
+                    <hr style={{ width: '90%', marginLeft: '16px'}}></hr>
                     <br />
-                    <h2 style={{ textAlign: 'center' }}>Totais</h2>
                     <Row
                         style={
                             {

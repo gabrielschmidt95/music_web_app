@@ -37,7 +37,7 @@ const ArtistList: React.FunctionComponent = () => {
     return (
         <>
             <h1 style={{ textAlign: 'center' }}>Artistas</h1>
-
+            <hr style={{ width: '90%', marginLeft: '16px'}}></hr>
             <Container fluid
                 style={
                     {

@@ -102,6 +102,7 @@ const Home: React.FunctionComponent = () => {
     return (
         <>
             <h2 style={{ textAlign: 'center' }}>Gerenciador de Albuns</h2>
+            <hr style={{ width: '90%', marginLeft: '16px'}}></hr>
             <Container fluid style={
                 {
                     padding: '1rem',

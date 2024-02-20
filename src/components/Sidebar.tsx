@@ -4,6 +4,7 @@ import { Image, Spinner } from 'react-bootstrap'
 import { FaFileCsv, FaFileCode, FaAccusoft, FaUser, FaTasks } from 'react-icons/fa'
 import { ExportCollection } from '../services/Albuns';
 import { useState } from 'react';
+import { useAuth0 } from "@auth0/auth0-react";
 
 const SidebarBottom = styled.div`
     position: absolute;
@@ -87,13 +88,33 @@ const SidebarData = [
     }
 ]
 
+const LogoutButton = () => {
+    const { logout } = useAuth0();
+
+    return (
+        <MenuItemButton onClick={() => logout({ logoutParams: { returnTo: window.location.origin } })}>
+            Log Out
+        </MenuItemButton>
+    );
+};
+
 const Home: React.FunctionComponent = () => {
     const [exportLoadingCSV, setExportLoadingCSV] = useState(false);
     const [exportLoadingJSON, setExportLoadingJSON] = useState(false);
+    const localUser = localStorage.getItem('user')
+    let user = {
+        given_name: '',
+        family_name: '',
+        picture: ''
+    }
 
+    if (localUser !== null && localUser !== undefined && localUser !== 'undefined') {
+        user = JSON.parse(localUser)
+    }
     return (
         <SidebarMenu>
             <h2 style={{ marginLeft: '16px', color: 'white', paddingTop: '1rem' }}>Music Collection</h2>
+            <hr style={{ width: '90%', marginLeft: '16px', color: "white" }}></hr>
             {SidebarData.map((item) => {
                 return (
                     <MenuItems key={item.title}>
@@ -104,6 +125,7 @@ const Home: React.FunctionComponent = () => {
                     </MenuItems>
                 )
             })}
+            <hr style={{ width: '90%', marginLeft: '16px', color: "white" }}></hr>
             <MenuItems>
                 <MenuItemButton
                     onClick={
@@ -171,16 +193,14 @@ const Home: React.FunctionComponent = () => {
                     {exportLoadingJSON && <Spinner style={{ marginLeft: '16px' }}></Spinner>}
                 </MenuItemButton>
             </MenuItems>
+            <hr style={{ width: '90%', marginLeft: '16px', color: "white" }}></hr>
             <MenuItems>
-                <MenuItemButton
-                    onClick={() => { localStorage.removeItem('user'); window.location.reload() }}
-                >
-                    <span style={{ marginLeft: '16px' }}>Logout</span>
-                </MenuItemButton>
+                <LogoutButton></LogoutButton>
             </MenuItems>
+            <hr style={{ width: '90%', marginLeft: '16px', color: "white" }}></hr>
             <SidebarBottom>
-                <Image src={JSON.parse(localStorage.getItem('user') ?? '{}').photoURL} roundedCircle style={{ width: '50px', height: '50px', marginLeft: '16px' }} />
-                <h4 style={{ marginLeft: '16px', color: "white", marginTop: "10px" }}>{JSON.parse(localStorage.getItem('user') ?? '{}').displayName}</h4>
+                <Image src={user.picture} roundedCircle style={{ width: '50px', height: '50px', marginLeft: '16px' }} />
+                <h4 style={{ marginLeft: '16px', color: "white", marginTop: "10px" }}>{user.given_name} {user.family_name}</h4>
             </SidebarBottom>
         </SidebarMenu>
     )
