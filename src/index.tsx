@@ -33,23 +33,25 @@ const App = () => {
   )
 
   if (!isAuthenticated) {
+    setTimeout(() => {
+      loginWithRedirect()
+    }, 1000)
     return (
       <Container style={
         {
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
-          height: '100vh'
+          height: '100vh',
+          cursor: 'pointer',
+          opacity: "0",
+          transition: "width 1s, height 1s, opacity 1s 1s"
         }
       }>
         <Row>
           <Col>
-            <Image src={logo} fluid roundedCircle/>
-          </Col>
-        </Row>
-        <Row>
-          <Col>
-            <Button onClick={() => loginWithRedirect()}>Entrar</Button>
+            <Image src={logo} fluid roundedCircle
+            />
           </Col>
         </Row>
       </Container>
