@@ -11,7 +11,7 @@ const ModalEdit = ({ showModal, modalType, albumInfo, handleCloseModal, refreshA
     modalType: string,
     albumInfo: AlbumData,
     handleCloseModal: () => void,
-    refreshArtists?: (artist: string) => void
+    refreshArtists?: (album: AlbumData) => void
 }) => {
     const [setFieldsNA, setSetFieldsNA] = useState(false);
     const [newArtist, setNewArtist] = useState(false);
@@ -44,7 +44,7 @@ const ModalEdit = ({ showModal, modalType, albumInfo, handleCloseModal, refreshA
         HandleAlbum(album).then((_) => {
             handleCloseModal();
             if (refreshArtists !== undefined) {
-                refreshArtists(album.artist);
+                refreshArtists(album);
             }
         });
         setAlbum(albumInfo);
@@ -70,7 +70,7 @@ const ModalEdit = ({ showModal, modalType, albumInfo, handleCloseModal, refreshA
             event.stopPropagation();
             return;
         }
-        
+
         if (album.discogs === undefined || album.discogs === null || album.discogs.id === 0 || album.discogs.cover_image === '') {
             GetDiscogs(album).then((data) => {
                 setDiscogsData(data);

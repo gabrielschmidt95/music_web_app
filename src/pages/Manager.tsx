@@ -43,14 +43,15 @@ const Home: React.FunctionComponent = () => {
         setArtist(undefined);
     }
 
-    function refreshArtists(artist: string) {
+    function refreshArtists(album: AlbumData) {
         clearContent();
         handleCloseModal();
-        alert(`Artista ${artist} atualizado!`);
-        setArtist({ id: artist, name: artist });
-        FetchAlbums(artist).then((data) => {
+        alert(`Album ${album.title} atualizado!`);
+        setArtist({ id: album.artist, name: album.artist });
+        FetchAlbums(album.artist).then((data) => {
             setAlbuns(data)
         });
+        setAlbumInfo(album)
     }
 
     function removeAlbum(albumInfo: AlbumData) {
@@ -102,7 +103,7 @@ const Home: React.FunctionComponent = () => {
     return (
         <>
             <h2 style={{ textAlign: 'center' }}>Gerenciador de Albuns</h2>
-            <hr style={{ width: '90%', marginLeft: '16px'}}></hr>
+            <hr style={{ width: '90%', marginLeft: '16px' }}></hr>
             <Container fluid style={
                 {
                     padding: '1rem',
