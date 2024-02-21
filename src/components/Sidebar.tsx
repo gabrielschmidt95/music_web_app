@@ -101,16 +101,8 @@ const LogoutButton = () => {
 const Home: React.FunctionComponent = () => {
     const [exportLoadingCSV, setExportLoadingCSV] = useState(false);
     const [exportLoadingJSON, setExportLoadingJSON] = useState(false);
-    const localUser = localStorage.getItem('user')
-    let user = {
-        given_name: '',
-        family_name: '',
-        picture: ''
-    }
+    const { user} = useAuth0();
 
-    if (localUser !== null && localUser !== undefined && localUser !== 'undefined') {
-        user = JSON.parse(localUser)
-    }
     return (
         <SidebarMenu>
             <h2 style={{ marginLeft: '16px', color: 'white', paddingTop: '1rem' }}>Music Collection</h2>
@@ -199,8 +191,8 @@ const Home: React.FunctionComponent = () => {
             </MenuItems>
             <hr style={{ width: '90%', marginLeft: '16px', color: "white" }}></hr>
             <SidebarBottom>
-                <Image src={user.picture} roundedCircle style={{ width: '50px', height: '50px', marginLeft: '16px' }} />
-                <h4 style={{ marginLeft: '16px', color: "white", marginTop: "10px" }}>{user.given_name} {user.family_name}</h4>
+                <Image src={user?.picture} roundedCircle style={{ width: '50px', height: '50px', marginLeft: '16px' }} />
+                <p style={{ marginLeft: '16px', color: "white", marginTop: "10px" }}>{user?.email}</p>
             </SidebarBottom>
         </SidebarMenu>
     )

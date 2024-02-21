@@ -2,7 +2,23 @@ import AlbumData from '../models/Album';
 import DiscogsData from '../models/Discogs';
 
 
-const tokenDiscogs = process.env.REACT_APP_DISCOGS_TOKEN as string;
+let tokenDiscogs = "" as string;
+
+async function GetTokenDiscogs() {
+    if (tokenDiscogs !== "") {
+        return tokenDiscogs;
+    }
+    const userDetailsByIdUrl = `https://${process.env.REACT_APP_AUTH0_DOMAIN}/api/v2/users/${sessionStorage.getItem("userSub")}`;
+    const metadataResponse = await fetch(userDetailsByIdUrl, {
+        headers: {
+            Authorization: `Bearer ${sessionStorage.getItem("userToken")}`,
+        },
+    });
+
+    const { user_metadata } = await metadataResponse.json();
+    tokenDiscogs = user_metadata.DISCOGS_TOKEN;
+    return tokenDiscogs;
+}
 
 function objToQueryString(obj: { [key: string]: any }) {
     const keyValuePairs = [];
@@ -30,7 +46,7 @@ async function getTracks(data: DiscogsData): Promise<any> {
 
 async function GetDiscogs(album: AlbumData): Promise<DiscogsData[]> {
     let queryParameters: Record<string, string> = {
-        "token": tokenDiscogs,
+        "token": await GetTokenDiscogs(),
         "artist": album.artist,
         "release_title": album.title,
         "barcode": album.barcode
@@ -50,7 +66,7 @@ async function GetDiscogs(album: AlbumData): Promise<DiscogsData[]> {
 
         if (data.isEmpty) {
             const queryParametersFiltered = {
-                "token": tokenDiscogs,
+                "token": await GetTokenDiscogs(),
                 "artist": album.artist,
                 "release_title": album.title,
             };
@@ -66,7 +82,7 @@ async function GetDiscogs(album: AlbumData): Promise<DiscogsData[]> {
         if (data === undefined) {
             return [] as DiscogsData[];
         }
-        
+
         let discogsData = data as DiscogsData[];
 
         if (discogsData === undefined || discogsData.length === 0) {
@@ -105,7 +121,7 @@ async function GetById(discogsId: string) {
     }
 
     try {
-        const response = await fetch(`https://api.discogs.com/releases/${discogsIdFiltered[0]}?token=${tokenDiscogs}`, queryParameters);
+        const response = await fetch(`https://api.discogs.com/releases/${discogsIdFiltered[0]}?token=${await GetTokenDiscogs()}`, queryParameters);
         const data = await response.json();
 
         if (data.hasOwnProperty('message')) {

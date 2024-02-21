@@ -9,7 +9,7 @@ import { useAuth0 } from '@auth0/auth0-react';
 
 
 const App = () => {
-    const { user, isAuthenticated, isLoading, loginWithRedirect } = useAuth0();
+    const { isAuthenticated, isLoading, loginWithRedirect, getAccessTokenSilently, user } = useAuth0();
     if (isLoading) return (
         <Container style={
             {
@@ -52,9 +52,16 @@ const App = () => {
             </Container>
         )
     }
-
-    localStorage.setItem('user', JSON.stringify(user))
-
+    
+    getAccessTokenSilently({
+        authorizationParams: {
+            audience: `https://${process.env.REACT_APP_AUTH0_DOMAIN}/api/v2/`,
+            scope: 'read:current_user',
+        },
+    }).then(token => {
+        sessionStorage.setItem("userToken", token);
+        sessionStorage.setItem("userSub", user?.sub as string);
+    });
     return (
         <BrowserRouter>
             <Container fluid style={{ paddingLeft: '0', backgroundColor: '#f8f9fa', height: '100vh', position: 'fixed' }}>
