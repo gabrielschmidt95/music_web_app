@@ -4,7 +4,7 @@ import TotalsData from '../models/Totals';
 let token = sessionStorage.getItem("token")
 
 async function Totals() :Promise<TotalsData>{
-    if (token === null) {
+    while (token === null) {
         await Token();
         token = sessionStorage.getItem("token");
     }

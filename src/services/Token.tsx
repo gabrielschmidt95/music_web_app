@@ -1,4 +1,7 @@
 async function FetchToken(): Promise<boolean> {
+    if (!sessionStorage.getItem("userSub")) {
+        return false;
+    }
     const userDetailsByIdUrl = `https://${process.env.REACT_APP_AUTH0_DOMAIN}/api/v2/users/${sessionStorage.getItem("userSub")}`;
     const metadataResponse = await fetch(userDetailsByIdUrl, {
         headers: {

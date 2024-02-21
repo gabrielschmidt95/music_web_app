@@ -6,7 +6,7 @@ import FetchSpotify from '../services/Spotify';
 let token = sessionStorage.getItem("token")
 
 async function getHeader(): Promise<Record<string, string>> {
-    if (token === null) {
+    while (token === null) {
         await Token();
         token = sessionStorage.getItem("token");
     }

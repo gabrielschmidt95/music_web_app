@@ -5,11 +5,11 @@ import Artist from '../models/Artist'
 let token = sessionStorage.getItem("token")
 
 async function fetchArtists(): Promise<string[]> {
-    if (token === null) {
+    while (token === null) {
         await Token();
         token = sessionStorage.getItem("token");
     }
-    const requestOptions = {
+    let requestOptions = {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
@@ -20,6 +20,7 @@ async function fetchArtists(): Promise<string[]> {
     if (response.status === 401) {
         await Token();
         token = sessionStorage.getItem("token");
+        requestOptions.headers.Authorization = 'Bearer ' + token;
         response = await fetch(`https://${process.env.REACT_APP_API_DOMAIN}/artists`, requestOptions);
     }
 
