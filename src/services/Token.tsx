@@ -7,7 +7,9 @@ async function FetchToken(): Promise<boolean> {
     });
 
     const { user_metadata } = await metadataResponse.json();
-    console.log(user_metadata);
+    if (!user_metadata) {
+        return false;
+    }
     const requestOptions = {
         method: 'POST',
         headers: {

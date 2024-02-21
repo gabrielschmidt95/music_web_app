@@ -101,8 +101,7 @@ const LogoutButton = () => {
 const Home: React.FunctionComponent = () => {
     const [exportLoadingCSV, setExportLoadingCSV] = useState(false);
     const [exportLoadingJSON, setExportLoadingJSON] = useState(false);
-    const { user} = useAuth0();
-
+    const {user} = useAuth0();
     return (
         <SidebarMenu>
             <h2 style={{ marginLeft: '16px', color: 'white', paddingTop: '1rem' }}>Music Collection</h2>
