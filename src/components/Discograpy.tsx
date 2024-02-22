@@ -10,7 +10,9 @@ const ModalDelete = ({ albuns, setAlbumInfo }: {
             <Container style={
                 {
                     padding: '1rem',
-                    height: '85%',
+                    height: '80vh',
+                    boxShadow: '0 4px 8px 0 rgba(0,0,0,0.2)',
+                    borderRadius: '1rem'
                 }
             }>
             </Container>
@@ -20,7 +22,7 @@ const ModalDelete = ({ albuns, setAlbumInfo }: {
         <Container style={
             {
                 padding: '1rem',
-                height: '85vh',
+                height: '80vh',
                 overflowY: 'auto',
                 boxShadow: '0 4px 8px 0 rgba(0,0,0,0.2)',
                 borderRadius: '1rem'

@@ -14,17 +14,19 @@ const SelectArtist = ({ albumInfo, handleShowModal, setModalType, handleShowModa
             <Container style={
                 {
                     padding: '1rem',
-                    height: '85vh',
+                    height: '80vh',
+                    boxShadow: '0 4px 8px 0 rgba(0,0,0,0.2)',
+                    borderRadius: '1rem'
                 }
             }>
             </Container>
         );
     }
     return (
-        <Container style={
+        <Container fluid style={
             {
                 padding: '1rem',
-                height: '85vh',
+                height: '80vh',
                 boxShadow: '0 4px 8px 0 rgba(0,0,0,0.2)',
                 borderRadius: '1rem',
                 overflowY: 'auto',
@@ -35,7 +37,10 @@ const SelectArtist = ({ albumInfo, handleShowModal, setModalType, handleShowModa
                 <Col>
                     <Image src={albumInfo.discogs.cover_image}
                         alt='Capa do Album' thumbnail />
+                    <hr />
                     <p>Discogs Fixado {albumInfo.discogs.len === 1 ? <FaIcons.FaCheckSquare></FaIcons.FaCheckSquare> : <FaIcons.FaTimes></FaIcons.FaTimes>} {albumInfo.discogs.len !== 1 ? albumInfo.discogs.len : ""}</p>
+                    <p>Spotify {albumInfo.spotify.external_urls.spotify !== "" ? <FaIcons.FaCheckSquare></FaIcons.FaCheckSquare> : <FaIcons.FaTimes></FaIcons.FaTimes>}</p>
+                    <hr />
                 </Col>
                 <Col>
                     <ListGroup variant="flush">

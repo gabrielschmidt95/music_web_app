@@ -107,7 +107,7 @@ const Home: React.FunctionComponent = () => {
             <Container fluid style={
                 {
                     padding: '1rem',
-                    height: '95vh',
+                    height: '90vh',
                     borderRadius: '1rem',
                     boxShadow: '0 4px 8px 0 rgba(0,0,0,0.2)',
                 }
@@ -133,6 +133,7 @@ const Home: React.FunctionComponent = () => {
                             }
                             onClick={
                                 () => {
+
                                     setAlbumInfo(
                                         {
                                             id: '',
@@ -149,8 +150,10 @@ const Home: React.FunctionComponent = () => {
                                             }
                                         } as AlbumData
                                     );
-                                    setModalType('Adicionar Album')
-                                    handleShowModal();
+                                    setTimeout(() => {
+                                        setModalType('Adicionar Album')
+                                        handleShowModal();
+                                    }, 100);
                                 }
                             }>Adicionar</Button>
                     </Col>
