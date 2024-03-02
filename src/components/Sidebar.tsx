@@ -101,7 +101,7 @@ const LogoutButton = () => {
 const Home: React.FunctionComponent = () => {
     const [exportLoadingCSV, setExportLoadingCSV] = useState(false);
     const [exportLoadingJSON, setExportLoadingJSON] = useState(false);
-    const {user} = useAuth0();
+    const { user } = useAuth0();
     return (
         <SidebarMenu>
             <h2 style={{ marginLeft: '16px', color: 'white', paddingTop: '1rem' }}>Music Collection</h2>
@@ -126,6 +126,7 @@ const Home: React.FunctionComponent = () => {
                             }
                             setExportLoadingCSV(true);
                             ExportCollection().then(data => {
+                                const headers = 'RELEASE_YEAR;ARTIST;TITLE;MEDIA;PURCHASE;ORIGIN;EDITION_YEAR;IFPI_MASTERING;IFPI_MOULD;BARCODE;MATRIZ;LOTE;OBS;DISCOGS_ID;SPOTIFY_ID\n'
                                 const csv = data.map((item) => {
                                     return [
                                         item.releaseYear,
@@ -145,8 +146,9 @@ const Home: React.FunctionComponent = () => {
                                         item.spotify.id,
                                     ].join(';').replace(/(\r\n|\n|\r)/gm, "")
                                 }).join('\n')
+                                const universalBOM = "\uFEFF";
                                 const hiddenElement = document.createElement('a')
-                                hiddenElement.href = 'data:text/csv;charset=utf-8,' + encodeURI('RELEASE_YEAR;ARTIST;TITLE;MEDIA;PURCHASE;ORIGIN;EDITION_YEAR;IFPI_MASTERING;IFPI_MOULD;BARCODE;MATRIZ;LOTE;OBS;DISCOGS_ID;SPOTIFY_ID\n' + csv)
+                                hiddenElement.href = 'data:application/csv;charset=utf-8,' + encodeURI(universalBOM + headers + csv)
                                 hiddenElement.target = '_blank'
                                 hiddenElement.download = 'collection.csv'
                                 hiddenElement.click()

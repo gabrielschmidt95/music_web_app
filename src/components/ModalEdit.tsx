@@ -196,9 +196,10 @@ const ModalEdit = ({ showModal, modalType, albumInfo, handleCloseModal, refreshA
                                         }
                                     }
                                 }
-                                defaultValue={"CD"}
+                                defaultValue={album?.media ? album?.media : "CD"}
                             >
                                 <option>CD</option>
+                                <option>CD &gt; DVD</option>
                                 <option>COMPACTO</option>
                                 <option>VINIL</option>
                                 <option>VINIL &gt; CD</option>
