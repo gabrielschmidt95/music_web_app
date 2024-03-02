@@ -147,8 +147,10 @@ const Home: React.FunctionComponent = () => {
                                     ].join(';').replace(/(\r\n|\n|\r)/gm, "")
                                 }).join('\n')
                                 const universalBOM = "\uFEFF";
+                                const csvData = universalBOM + headers + csv;
+                                const blob = new Blob([csvData], { type: 'text/csv' })
                                 const hiddenElement = document.createElement('a')
-                                hiddenElement.href = 'data:application/csv;charset=utf-8,' + encodeURI(universalBOM + headers + csv)
+                                hiddenElement.href = window.URL.createObjectURL(blob)
                                 hiddenElement.target = '_blank'
                                 hiddenElement.download = 'collection.csv'
                                 hiddenElement.click()
