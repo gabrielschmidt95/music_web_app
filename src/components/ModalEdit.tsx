@@ -200,10 +200,10 @@ const ModalEdit = ({ showModal, modalType, albumInfo, handleCloseModal, refreshA
                             >
                                 <option>CD</option>
                                 <option>CD &gt; DVD</option>
-                                <option>COMPACTO</option>
                                 <option>VINIL</option>
                                 <option>VINIL &gt; CD</option>
                                 <option>VINIL &gt; MP3</option>
+                                <option>VINIL 7'</option>
                             </Form.Select>
                         </Form.Group>
                         <Form.Group className="mb-3" controlId="editForm.ControlInput7">
