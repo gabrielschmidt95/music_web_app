@@ -195,7 +195,6 @@ const Home: React.FunctionComponent = () => {
             <hr style={{ width: '90%', marginLeft: '16px', color: "white" }}></hr>
             <SidebarBottom>
                 <Image src={user?.picture} roundedCircle style={{ width: '50px', height: '50px', marginLeft: '16px' }} />
-                <p style={{ marginLeft: '16px', color: "white", marginTop: "10px" }}>{user?.email}</p>
             </SidebarBottom>
         </SidebarMenu>
     )
