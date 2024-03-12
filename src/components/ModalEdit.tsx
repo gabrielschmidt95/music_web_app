@@ -70,7 +70,9 @@ const ModalEdit = ({ showModal, modalType, albumInfo, handleCloseModal, refreshA
             event.stopPropagation();
             return;
         }
-
+        if (album.media === undefined || album.media === '' || album.media.replace(/\s/g, "") === '') {
+            album.media = 'CD';
+        }
         if (album.discogs === undefined || album.discogs === null || album.discogs.id === 0 || album.discogs.cover_image === '') {
             GetDiscogs(album).then((data) => {
                 setDiscogsData(data);
