@@ -2,6 +2,7 @@ import { Routes, Route } from 'react-router-dom';
 import Manager from './pages/Manager';
 import Dashboard from './pages/Dashboard';
 import ArtistList from './pages/Artirst';
+import Tree from './pages/Tree';
 
 const AppRoutes = () => {
   return (
@@ -10,6 +11,7 @@ const AppRoutes = () => {
       <Route path='/dashboard' element={<Dashboard />} />
       <Route path='/manager' element={<Manager />} />
       <Route path='/artists' element={<ArtistList />} />
+      <Route path='/tree' element={<Tree />} />
     </Routes>
   );
 }

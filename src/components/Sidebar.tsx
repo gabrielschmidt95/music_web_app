@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 import { Image, Spinner } from 'react-bootstrap'
-import { FaFileCsv, FaFileCode, FaAccusoft, FaUser, FaTasks } from 'react-icons/fa'
+import { FaFileCsv, FaFileCode, FaAccusoft, FaUser, FaTasks, FaTree } from 'react-icons/fa'
 import { ExportCollection } from '../services/Albuns';
 import { useState } from 'react';
 import { useAuth0 } from "@auth0/auth0-react";
@@ -85,6 +85,11 @@ const SidebarData = [
         title: 'Artistas',
         path: '/artists',
         icon: <FaUser />
+    },
+    {
+        title: 'Arvore',
+        path: '/tree',
+        icon: <FaTree />
     }
 ]
 
