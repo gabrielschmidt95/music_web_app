@@ -51,48 +51,16 @@ const ModalDelete = ({ showModalFixDiscogs, validatedFixDiscogs, handleCloseModa
                     >
                         <Row>
                             {discogsData ? discogsData.map((item, index) => (
-                                <Col key={item.id} xs={2} style={
-                                    {
-                                        padding: '1rem',
-                                        height: '100%',
-                                        borderRadius: '1rem',
-                                        boxShadow: '0 4px 8px 0 rgba(0,0,0,0.2)',
-                                        margin: '1rem',
-                                    }
-
-                                }>
-                                    <Card style={{ width: '10rem' }}>
-                                        <Card.Img variant="top" src={item.thumb} style={
-                                            {
-                                                height: '10rem',
-                                                width: '10rem',
-                                                objectFit: 'cover'
-                                            }
-
-                                        } />
-                                        <Card.Body>
-                                            <Card.Title>{item.title.substring(0, 20)}</Card.Title>
-                                            <Button variant="info" onClick={() => {
-                                                window.open('https://www.discogs.com' + item.uri, '_blank')
-                                            }}>{item.id}</Button>
-                                            <hr />
-                                            <Button variant="primary" type="submit" onClick={
-                                                () => {
-                                                    setFixDiscogs(item.id.toString());
-                                                }
-
-                                            }>Escolher</Button>
-                                        </Card.Body>
-                                        <Card.Footer>
-                                            <br />
-                                            <ul>
-                                                <li key={item.format[0]} className="text-muted">{item.format[0]}</li>
-                                                <li key={item.country} className="text-muted">{item.country}</li>
-                                            </ul>
-
-                                        </Card.Footer>
-                                    </Card>
-                                </Col>
+                                <Button variant="info" onClick={() => {
+                                    window.open('https://www.discogs.com' + item.uri, '_blank')
+                                }}
+                                    style={
+                                        {
+                                            margin: '1rem',
+                                            width: '10rem',
+                                            borderRadius: '1rem',
+                                        }
+                                    } key={index}>{item.id}</Button>
                             )) : <></>}
                         </Row>
                     </Container>

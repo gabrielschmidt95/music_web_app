@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Row, Col, Container, Button } from 'react-bootstrap';
+import { Row, Col, Container, Card, Button } from 'react-bootstrap';
 
 import AlbumData from '../models/Album'
 import Artist from '../models/Artist'
@@ -13,6 +13,7 @@ import ModalDelete from '../components/ModalDelete';
 import ModalFixDiscogs from '../components/ModalFixDiscogs';
 import ModalEdit from '../components/ModalEdit';
 import Discograpy from '../components/Discograpy';
+import { FaSpotify } from 'react-icons/fa';
 
 const Home: React.FunctionComponent = () => {
     const [albuns, setAlbuns] = useState<AlbumData[]>();
@@ -156,6 +157,18 @@ const Home: React.FunctionComponent = () => {
                                     }, 100);
                                 }
                             }>Adicionar</Button>
+                    </Col>
+                    <Col xs={2}>
+                        {albuns ? <Card.Link onClick={
+                            () => {
+                                window.open(albuns[0].spotify.external_urls.spotify, '_blank')
+                            }
+                        }
+                        style={
+                            {
+                                cursor: 'pointer'
+                            }
+                        }><FaSpotify size={50} color='green' /></Card.Link> : <></>}
                     </Col>
                 </Row>
                 <br />
