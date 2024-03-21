@@ -1,4 +1,4 @@
-import { Modal, Button, Form, Container, Row, Col, Card } from 'react-bootstrap'
+import { Modal, Button, Form, Container, Row } from 'react-bootstrap'
 import AlbumData from '../models/Album'
 import { useState } from 'react'
 import { GetDiscogs } from '../services/Discogs'

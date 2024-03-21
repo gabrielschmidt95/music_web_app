@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Row, Col, Container, Card, Button } from 'react-bootstrap';
+import { Row, Col, Container, Button } from 'react-bootstrap';
 
 import AlbumData from '../models/Album'
 import Artist from '../models/Artist'
@@ -159,16 +159,22 @@ const Home: React.FunctionComponent = () => {
                             }>Adicionar</Button>
                     </Col>
                     <Col xs={2}>
-                        {albuns ? <Card.Link onClick={
-                            () => {
-                                window.open(albuns[0].spotify.external_urls.spotify, '_blank')
-                            }
+                        {albuns ?
+                            <FaSpotify size={50} color={albuns[0].spotify.artists ? 'green' : 'black'}
+                                onClick={
+                                    () => {
+                                        if (albuns[0].spotify.artists) {
+                                            window.open(albuns[0].spotify.artists[0]["external_urls"]["spotify"], '_blank')
+                                        }
+                                    }
+                                }
+                                style={
+                                    {
+                                        cursor: albuns[0].spotify.artists ? 'pointer' : 'not-allowed'
+                                    }
+                                }
+                            /> : <></>
                         }
-                        style={
-                            {
-                                cursor: 'pointer'
-                            }
-                        }><FaSpotify size={50} color='green' /></Card.Link> : <></>}
                     </Col>
                 </Row>
                 <br />
