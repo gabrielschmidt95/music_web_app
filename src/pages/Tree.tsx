@@ -28,7 +28,7 @@ const TreeList: React.FunctionComponent = () => {
 
     const [validatedFixDiscogs, setValidatedFixDiscogs] = useState(false);
     const [fixDiscogs, setFixDiscogs] = useState<string>('');
-    const [artist, setArtist] = useState<{ id: string; name: string; }>();
+    // const [artist, setArtist] = useState<{ id: string; name: string; }>();
 
 
     const albunsByArtist = (artist: string) => {
@@ -39,14 +39,14 @@ const TreeList: React.FunctionComponent = () => {
     function clearContent() {
         setAlbuns([]);
         setAlbumInfo(undefined);
-        setArtist(undefined);
+        // setArtist(undefined);
     }
 
     function refreshArtists(album: AlbumData) {
         clearContent();
         handleCloseModal();
         alert(`Album ${album.title} atualizado!`);
-        setArtist({ id: album.artist, name: album.artist });
+        // setArtist({ id: album.artist, name: album.artist });
         FetchAlbums(album.artist).then((data) => {
             setAlbuns(data)
         });
