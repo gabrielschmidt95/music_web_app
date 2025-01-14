@@ -58,6 +58,7 @@ const SelectArtist = ({ albumInfo, handleShowModal, setModalType, handleShowModa
                         <ListGroup.Item>Barcode: {albumInfo.barcode}</ListGroup.Item>
                         <ListGroup.Item>Matriz: {albumInfo.matriz}</ListGroup.Item>
                         <ListGroup.Item>Lote: {albumInfo.lote}</ListGroup.Item>
+                        <ListGroup.Item>Peso(g): {albumInfo.weight}</ListGroup.Item>
                         <ListGroup.Item>Observação: {albumInfo.obs}</ListGroup.Item>
                     </ListGroup>
                 </Col>

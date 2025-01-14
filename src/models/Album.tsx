@@ -16,6 +16,7 @@ interface AlbumData {
     lote: string,
     obs: string,
     discogs: Discogs,
+    weight: number,
     spotify: {
         album_type: string,
         artists: null,

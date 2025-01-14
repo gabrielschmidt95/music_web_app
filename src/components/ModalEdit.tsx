@@ -269,6 +269,16 @@ const ModalEdit = ({ showModal, modalType, albumInfo, handleCloseModal, refreshA
                             />
                         </Form.Group>
                         <Form.Group className="mb-3" controlId="editForm.ControlInput12">
+                            <Form.Label>Peso(g)</Form.Label>
+                            <Form.Control
+                                type="number"
+                                defaultValue={setFieldsNA ? "NA" : album?.weight}
+                                onChange={
+                                    (e) => handleInputChange('weight', e.target.value)
+                                }
+                            />
+                        </Form.Group>
+                        <Form.Group className="mb-3" controlId="editForm.ControlInput12">
                             <Form.Label>Observação</Form.Label>
                             <Form.Control
                                 type="text"
