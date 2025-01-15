@@ -4,6 +4,7 @@ import { GetDiscogs, GetById } from './Discogs';
 import FetchSpotify from '../services/Spotify';
 
 let token = sessionStorage.getItem("token")
+const protocol = process.env.REACT_APP_API_DOMAIN?.includes('localhost') ? 'http' : 'https';
 
 async function getHeader(): Promise<Record<string, string>> {
     while (token === null) {
@@ -17,7 +18,7 @@ async function getHeader(): Promise<Record<string, string>> {
 }
 
 async function FetchAlbums(artist: string): Promise<AlbumData[]> {
-    const url = `https://${process.env.REACT_APP_API_DOMAIN}/album/artist`
+    const url = `${protocol}://${process.env.REACT_APP_API_DOMAIN}/album/artist`
     const requestOptions = {
         method: 'POST',
         headers: await getHeader(),
@@ -46,7 +47,7 @@ async function FetchAlbums(artist: string): Promise<AlbumData[]> {
 }
 
 async function FetchAlbumByTitle(title: string): Promise<AlbumData[]> {
-    const url = `https://${process.env.REACT_APP_API_DOMAIN}/title`
+    const url = `${protocol}://${process.env.REACT_APP_API_DOMAIN}/title`
     const requestOptions = {
         method: 'POST',
         headers: await getHeader(),
@@ -69,10 +70,10 @@ async function FetchAlbumByTitle(title: string): Promise<AlbumData[]> {
 async function HandleAlbum(album: AlbumData) {
     let uri = "";
     if (album.id === undefined || album.id === "") {
-        uri = `https://${process.env.REACT_APP_API_DOMAIN}/new/album`;
+        uri = `${protocol}://${process.env.REACT_APP_API_DOMAIN}/new/album`;
     }
     else {
-        uri = `https://${process.env.REACT_APP_API_DOMAIN}/update/album`;
+        uri = `${protocol}://${process.env.REACT_APP_API_DOMAIN}/update/album`;
     }
 
     if (album.spotify === null) {
@@ -96,7 +97,7 @@ async function HandleAlbum(album: AlbumData) {
 }
 
 async function RemoveAlbum(id: string) {
-    const uri = `https://${process.env.REACT_APP_API_DOMAIN}/delete/album`
+    const uri = `${protocol}://${process.env.REACT_APP_API_DOMAIN}/delete/album`
     const requestOptions = {
         method: 'POST',
         headers: await getHeader(),
@@ -164,7 +165,7 @@ function sortByArtist(data: Record<string, number>[]): Record<string, string | n
 
 
 async function FetchAlbumsByYearMetric(year: number, metric: string): Promise<Record<string, string>[]> {
-    const url = `https://${process.env.REACT_APP_API_DOMAIN}/album/year`
+    const url = `${protocol}://${process.env.REACT_APP_API_DOMAIN}/album/year`
     const requestOptions = {
         method: 'POST',
         headers: await getHeader(),
@@ -184,7 +185,7 @@ async function FetchAlbumsByYearMetric(year: number, metric: string): Promise<Re
 }
 
 async function Aggregate(qyery: object): Promise<Record<string, number | string>[]> {
-    const url = `https://${process.env.REACT_APP_API_DOMAIN}/aggregation`
+    const url = `${protocol}://${process.env.REACT_APP_API_DOMAIN}/aggregation`
     const requestOptions = {
         method: 'POST',
         headers: await getHeader(),
@@ -205,7 +206,7 @@ async function Aggregate(qyery: object): Promise<Record<string, number | string>
 }
 
 async function Find(qyery: object): Promise<Record<string, number | string>[]> {
-    const url = `https://${process.env.REACT_APP_API_DOMAIN}/find`
+    const url = `${protocol}://${process.env.REACT_APP_API_DOMAIN}/find`
     const requestOptions = {
         method: 'POST',
         headers: await getHeader(),
@@ -227,7 +228,7 @@ async function Find(qyery: object): Promise<Record<string, number | string>[]> {
 }
 
 async function FindAndSort(qyery: object): Promise<Record<string, number | string>[]> {
-    const url = `https://${process.env.REACT_APP_API_DOMAIN}/findAndSort`
+    const url = `${protocol}://${process.env.REACT_APP_API_DOMAIN}/findAndSort`
     const requestOptions = {
         method: 'POST',
         headers: await getHeader(),
@@ -250,7 +251,7 @@ async function FindAndSort(qyery: object): Promise<Record<string, number | strin
 
 
 async function ExportCollection(): Promise<AlbumData[]> {
-    const url = `https://${process.env.REACT_APP_API_DOMAIN}/all`
+    const url = `${protocol}://${process.env.REACT_APP_API_DOMAIN}/all`
     const requestOptions = {
         method: 'GET',
         headers: await getHeader(),

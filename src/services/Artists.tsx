@@ -3,6 +3,7 @@ import Token from './Token';
 import Artist from '../models/Artist'
 
 let token = sessionStorage.getItem("token")
+const protocol = process.env.REACT_APP_API_DOMAIN?.includes('localhost') ? 'http' : 'https';
 
 async function fetchArtists(): Promise<string[]> {
     while (token === null) {
@@ -16,12 +17,12 @@ async function fetchArtists(): Promise<string[]> {
             'Authorization': 'Bearer ' + token
         }
     };
-    let response = await fetch(`https://${process.env.REACT_APP_API_DOMAIN}/artists`, requestOptions);
+    let response = await fetch(`${protocol}://${process.env.REACT_APP_API_DOMAIN}/artists`, requestOptions);
     if (response.status === 401) {
         await Token();
         token = sessionStorage.getItem("token");
         requestOptions.headers.Authorization = 'Bearer ' + token;
-        response = await fetch(`https://${process.env.REACT_APP_API_DOMAIN}/artists`, requestOptions);
+        response = await fetch(`${protocol}://${process.env.REACT_APP_API_DOMAIN}/artists`, requestOptions);
     }
 
     return await response.json();
