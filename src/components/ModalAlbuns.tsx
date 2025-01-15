@@ -3,7 +3,7 @@ import { FaRecordVinyl, FaCompactDisc, FaEdit, FaTrash } from 'react-icons/fa'
 import ModalEdit from '../components/ModalEdit';
 import ModalDelete from '../components/ModalDelete';
 import { useState } from 'react';
-import AlbumData from '../models/Album'
+import {AlbumData} from '../models/Album'
 import { FetchAlbumByTitle, RemoveAlbum } from '../services/Albuns';
 
 const ModalAlbum = ({ modalValue, showModal, modalYear, handleCloseModal }: {

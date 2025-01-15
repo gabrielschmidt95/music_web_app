@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { Row, Col, Container, Button } from 'react-bootstrap';
 
-import AlbumData from '../models/Album'
+import {AlbumData} from '../models/Album'
 import Artist from '../models/Artist'
 
 import Artists from '../services/Artists'

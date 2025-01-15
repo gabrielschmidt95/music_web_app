@@ -1,4 +1,11 @@
 import Discogs from './Discogs';
+
+interface Discs {
+    discNumber: string
+    weight: string
+    matriz: string
+}
+
 interface AlbumData {
 
     id: string,
@@ -16,7 +23,7 @@ interface AlbumData {
     lote: string,
     obs: string,
     discogs: Discogs,
-    weight: string,
+    discs: Discs[],
     spotify: {
         album_type: string,
         artists: null,
@@ -35,4 +42,4 @@ interface AlbumData {
     }
 }
 
-export default AlbumData;
+export type { Discs, AlbumData };

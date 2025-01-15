@@ -1,5 +1,5 @@
 import { Modal, Button, Form, Container, Row } from 'react-bootstrap'
-import AlbumData from '../models/Album'
+import {AlbumData} from '../models/Album'
 import { useState } from 'react'
 import { GetDiscogs } from '../services/Discogs'
 import DiscogsData from '../models/Discogs';

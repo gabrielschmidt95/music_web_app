@@ -1,6 +1,6 @@
 import { Modal, Button, Form } from 'react-bootstrap'
 import { useEffect, useState } from 'react';
-import AlbumData from '../models/Album';
+import { AlbumData, Discs } from '../models/Album';
 import Artists from '../services/Artists'
 import { HandleAlbum, GetDiscogs } from '../services/Albuns';
 import ModaldiscogsChoose from './ModalDiscogsChoose';
@@ -159,6 +159,8 @@ const ModalEdit = ({ showModal, modalType, albumInfo, handleCloseModal, refreshA
                                 required
                                 type="number"
                                 defaultValue={album?.releaseYear}
+                                min={1900}
+                                max={new Date().getFullYear() + 1}
                                 onChange={
                                     (e) => handleInputChange('releaseYear', parseInt(e.target.value))
                                 }
@@ -212,6 +214,8 @@ const ModalEdit = ({ showModal, modalType, albumInfo, handleCloseModal, refreshA
                             <Form.Label>Ano de Edição</Form.Label>
                             <Form.Control
                                 type="number"
+                                min={1900}
+                                max={new Date().getFullYear() + 1}
                                 defaultValue={album?.editionYear}
                                 onChange={
                                     (e) => handleInputChange('editionYear', parseInt(e.target.value))
@@ -268,16 +272,59 @@ const ModalEdit = ({ showModal, modalType, albumInfo, handleCloseModal, refreshA
                                 }
                             />
                         </Form.Group>
-                        <Form.Group className="mb-3" controlId="editForm.ControlInput12">
-                            <Form.Label>Peso(g)</Form.Label>
+                        <Form.Group className="mb-3" controlId="editForm.ControlInput13">
+                            <Form.Label>Número de Discos</Form.Label>
                             <Form.Control
-                                type="text"
-                                defaultValue={setFieldsNA ? "NA" : album?.weight}
+                                type="number"
+                                min={1}
+                                defaultValue={album?.discs ? album?.discs.length : 0}
                                 onChange={
-                                    (e) => handleInputChange('weight', e.target.value)
+                                    (e) => {
+                                        let len = album?.discs ? album?.discs.length : 1;
+                                        if (parseInt(e.target.value) > len) {
+                                            album?.discs.push({ discNumber: e.target.value, weight: 'NA', matriz: 'NA' } as Discs)
+                                        }
+                                        else if (parseInt(e.target.value) < len) {
+                                            album?.discs.pop();
+                                        }
+                                        handleInputChange('discs', album?.discs ? album?.discs : [{ discNumber: e.target.value, weight: 'NA', matriz: 'NA' } as Discs])
+                                    }
                                 }
                             />
                         </Form.Group>
+                        {album?.discs == undefined ? <></> :
+                            album?.discs.map((disc, _) => (
+                                <div key={disc.discNumber}>
+                                    {
+                                        !album?.media.startsWith('VINIL') ? <></> :
+
+                                            <Form.Group className="mb-3" controlId={`editForm.ControlInputDiscDuration${disc.discNumber}`}>
+                                                <Form.Label>Peso do Disco {disc.discNumber}</Form.Label>
+                                                <Form.Control
+                                                    type="text"
+                                                    defaultValue={disc.weight}
+                                                    onChange={(e) => { 
+                                                        disc.weight = e.target.value;
+                                                        handleInputChange('discs', album?.discs ? album?.discs : [{ discNumber: '1', weight: '', matriz: 'NA' } as Discs])
+                                                    }
+                                                    }
+                                                />
+                                            </Form.Group>
+                                    }
+                                    <Form.Group className="mb-3" controlId={`editForm.ControlInputDiscDuration${disc.discNumber}`}>
+                                        <Form.Label>Matriz do Disco {disc.discNumber}</Form.Label>
+                                        <Form.Control
+                                            type="text"
+                                            defaultValue={disc.matriz}
+                                            onChange={(e) => {
+                                                disc.matriz = e.target.value;
+                                                handleInputChange('discs', album?.discs ? album?.discs : [{ discNumber: '1', weight: 'NA', matriz: 'NA' } as Discs])
+                                             }}
+                                        />
+                                    </Form.Group>
+                                </div>
+                            ))
+                        }
                         <Form.Group className="mb-3" controlId="editForm.ControlInput12">
                             <Form.Label>Observação</Form.Label>
                             <Form.Control

@@ -1,5 +1,5 @@
-import Album from '../models/Album'
-import { Image, ListGroup, Row, Col, Container, Button, Badge } from 'react-bootstrap'
+import { AlbumData as Album } from '../models/Album'
+import { Image, ListGroup, Row, Col, Container, Button, Badge, Card } from 'react-bootstrap'
 import DateTimeFormat from '../services/Utils';
 import * as FaIcons from 'react-icons/fa'
 
@@ -56,11 +56,25 @@ const SelectArtist = ({ albumInfo, handleShowModal, setModalType, handleShowModa
                         <ListGroup.Item>IFPI Mastering: {albumInfo.ifpiMastering}</ListGroup.Item>
                         <ListGroup.Item>IFPI Mould: {albumInfo.ifpiMould}</ListGroup.Item>
                         <ListGroup.Item>Barcode: {albumInfo.barcode}</ListGroup.Item>
-                        <ListGroup.Item>Matriz: {albumInfo.matriz}</ListGroup.Item>
+                        {albumInfo.discs?.[0]?.matriz ? '' : <ListGroup.Item>Matriz: {albumInfo.matriz}</ListGroup.Item>}
                         <ListGroup.Item>Lote: {albumInfo.lote}</ListGroup.Item>
-                        <ListGroup.Item>Peso(g): {albumInfo.weight}</ListGroup.Item>
                         <ListGroup.Item>Observação: {albumInfo.obs}</ListGroup.Item>
                     </ListGroup>
+                </Col>
+            </Row>
+            <br />
+            <Row>
+                <Col>
+                    {albumInfo.discs ? albumInfo.discs.map((disc, _) => (
+                        <Card key={disc.discNumber} style={{ width: '18rem' }}>
+                            <Card.Header>Disco {disc.discNumber}</Card.Header>
+                            <ListGroup variant="flush">
+                                {albumInfo?.media.startsWith('VINIL') ? <ListGroup.Item> Peso: {disc.weight} g</ListGroup.Item> : ''}
+                                <ListGroup.Item>Matriz: {disc.matriz}</ListGroup.Item>
+                            </ListGroup>
+                        </Card>
+                        // <ListGroup.Item key={disc.discNumber}>Disco {disc.discNumber} - Peso(g) {disc.weight} g - Matriz: {disc.matriz}</ListGroup.Item>
+                    )) : ''}
                 </Col>
             </Row>
             <br />

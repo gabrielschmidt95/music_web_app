@@ -1,7 +1,7 @@
 import { Container, Row, Col, Button, Accordion, Spinner } from 'react-bootstrap'
 import Artists from '../services/Artists'
 import { useState } from 'react';
-import AlbumData from '../models/Album';
+import {AlbumData} from '../models/Album';
 import AlbumInfo from '../components/AlbumInfo';
 import ModalDelete from '../components/ModalDelete';
 import ModalFixDiscogs from '../components/ModalFixDiscogs';

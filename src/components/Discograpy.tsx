@@ -1,5 +1,5 @@
 import { Container, Row, Col, Card } from 'react-bootstrap'
-import AlbumData from '../models/Album'
+import {AlbumData} from '../models/Album'
 
 const ModalDelete = ({ albuns, setAlbumInfo }: {
     albuns: AlbumData[],

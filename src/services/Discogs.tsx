@@ -1,4 +1,4 @@
-import AlbumData from '../models/Album';
+import {AlbumData} from '../models/Album';
 import DiscogsData from '../models/Discogs';
 
 

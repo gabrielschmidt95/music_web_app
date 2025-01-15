@@ -1,4 +1,4 @@
-import Album from '../models/Album'
+import {AlbumData as Album} from '../models/Album'
 import { Modal, Button } from 'react-bootstrap'
 
 const ModalDelete = ({ albumInfo, showModalDelete, handleCloseModalDelete, removeAlbum }: {

@@ -1,4 +1,4 @@
-import AlbumData from '../models/Album';
+import {AlbumData} from '../models/Album';
 import Token from './Token';
 import { GetDiscogs, GetById } from './Discogs';
 import FetchSpotify from '../services/Spotify';
