@@ -3,6 +3,16 @@ import { Image, ListGroup, Row, Col, Container, Button, Badge, Card } from 'reac
 import DateTimeFormat from '../services/Utils';
 import * as FaIcons from 'react-icons/fa'
 
+function numberToLetter(number: number) {
+    let result = '';
+    do {
+      const letter = String.fromCharCode(65 + (number % 26));
+      result = letter + result;
+      number = Math.floor(number / 26) - 1;
+    } while (number >= 0)
+    return result;
+  }
+
 const SelectArtist = ({ albumInfo, handleShowModal, setModalType, handleShowModalDelete, handleShowModalFixDiscogs }: {
     albumInfo: Album | undefined, handleShowModal: () => void,
     setModalType: (type: string) => void,
@@ -70,7 +80,12 @@ const SelectArtist = ({ albumInfo, handleShowModal, setModalType, handleShowModa
                             <Card.Header>Disco {disc.discNumber}</Card.Header>
                             <ListGroup variant="flush">
                                 {albumInfo?.media.startsWith('VINIL') ? <ListGroup.Item> Peso: {disc.weight} g</ListGroup.Item> : ''}
-                                <ListGroup.Item>Matriz: {disc.matriz}</ListGroup.Item>
+                                {albumInfo?.media.startsWith('VINIL') ? (
+                                    disc.matriz.map((matriz, index) => (
+                                        <ListGroup.Item key={matriz}>Matriz {numberToLetter(index)}: {matriz}</ListGroup.Item>
+                                    ))
+                                ) : <ListGroup.Item>Matriz: {disc.matriz[0]}</ListGroup.Item>}
+                                
                             </ListGroup>
                         </Card>
                         // <ListGroup.Item key={disc.discNumber}>Disco {disc.discNumber} - Peso(g) {disc.weight} g - Matriz: {disc.matriz}</ListGroup.Item>

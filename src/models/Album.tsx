@@ -3,7 +3,7 @@ import Discogs from './Discogs';
 interface Discs {
     discNumber: string
     weight: string
-    matriz: string
+    matriz: string[]
 }
 
 interface AlbumData {

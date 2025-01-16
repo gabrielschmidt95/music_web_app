@@ -6,6 +6,16 @@ import { HandleAlbum, GetDiscogs } from '../services/Albuns';
 import ModaldiscogsChoose from './ModalDiscogsChoose';
 import DiscogsData from '../models/Discogs';
 
+function numberToLetter(number: number) {
+    let result = '';
+    do {
+      const letter = String.fromCharCode(65 + (number % 26));
+      result = letter + result;
+      number = Math.floor(number / 26) - 1;
+    } while (number >= 0)
+    return result;
+  }
+
 const ModalEdit = ({ showModal, modalType, albumInfo, handleCloseModal, refreshArtists }: {
     showModal: boolean,
     modalType: string,
@@ -282,46 +292,66 @@ const ModalEdit = ({ showModal, modalType, albumInfo, handleCloseModal, refreshA
                                     (e) => {
                                         let len = album?.discs ? album?.discs.length : 1;
                                         if (parseInt(e.target.value) > len) {
-                                            album?.discs.push({ discNumber: e.target.value, weight: 'NA', matriz: 'NA' } as Discs)
+                                            album?.discs.push({ discNumber: e.target.value, weight: 'NA', matriz: ['NA'] } as Discs)
                                         }
                                         else if (parseInt(e.target.value) < len) {
                                             album?.discs.pop();
                                         }
-                                        handleInputChange('discs', album?.discs ? album?.discs : [{ discNumber: e.target.value, weight: 'NA', matriz: 'NA' } as Discs])
+                                        handleInputChange('discs', album?.discs ? album?.discs : [{ discNumber: e.target.value, weight: 'NA', matriz: ['NA'] } as Discs])
                                     }
                                 }
                             />
                         </Form.Group>
-                        {album?.discs == undefined ? <></> :
+                        {album?.discs === undefined ? <></> :
                             album?.discs.map((disc, _) => (
                                 <div key={disc.discNumber}>
                                     {
                                         !album?.media.startsWith('VINIL') ? <></> :
 
                                             <Form.Group className="mb-3" controlId={`editForm.ControlInputDiscDuration${disc.discNumber}`}>
-                                                <Form.Label>Peso do Disco {disc.discNumber}</Form.Label>
+                                                <Form.Label>Peso do Disco {disc.discNumber} (g)</Form.Label>
                                                 <Form.Control
                                                     type="text"
                                                     defaultValue={disc.weight}
-                                                    onChange={(e) => { 
+                                                    onChange={(e) => {
                                                         disc.weight = e.target.value;
-                                                        handleInputChange('discs', album?.discs ? album?.discs : [{ discNumber: '1', weight: '', matriz: 'NA' } as Discs])
+                                                        handleInputChange('discs', album?.discs ? album?.discs : [{ discNumber: '1', weight: '', matriz: ['NA'] } as Discs])
                                                     }
                                                     }
                                                 />
                                             </Form.Group>
                                     }
-                                    <Form.Group className="mb-3" controlId={`editForm.ControlInputDiscDuration${disc.discNumber}`}>
-                                        <Form.Label>Matriz do Disco {disc.discNumber}</Form.Label>
-                                        <Form.Control
-                                            type="text"
-                                            defaultValue={disc.matriz}
-                                            onChange={(e) => {
-                                                disc.matriz = e.target.value;
-                                                handleInputChange('discs', album?.discs ? album?.discs : [{ discNumber: '1', weight: 'NA', matriz: 'NA' } as Discs])
-                                             }}
-                                        />
-                                    </Form.Group>
+                                    {
+                                        !album?.media.startsWith('VINIL') ? <Form.Group className="mb-3" controlId={`editForm.ControlInputDiscDuration${disc.discNumber}`}>
+                                            <Form.Label>Matriz do Disco {disc.discNumber}</Form.Label>
+                                            <Form.Control
+                                                type="text"
+                                                defaultValue={disc.matriz}
+                                                onChange={(e) => {
+                                                    disc.matriz[0] = e.target.value;
+                                                    handleInputChange('discs', album?.discs ? album?.discs : [{ discNumber: '1', weight: 'NA', matriz: ['NA'] } as Discs])
+                                                }}
+                                            />
+                                        </Form.Group> :
+                                            <>{
+                                                Array.from({ length: 2 }, (_, i) => {
+                                                    return (
+                                                        <Form.Group className="mb-3" controlId={`editForm.ControlInputDiscDuration${disc.discNumber}`} key={i}>
+                                                            <Form.Label>Matriz do Lado {numberToLetter(i)}</Form.Label>
+                                                            <Form.Control
+                                                                type="text"
+                                                                defaultValue={disc.matriz[i]}
+                                                                onChange={(e) => {
+                                                                    disc.matriz[i] = e.target.value;
+                                                                    handleInputChange('discs', album?.discs ? album?.discs : [{ discNumber: '1', weight: 'NA', matriz: ['NA'] } as Discs])
+                                                                }}
+                                                            />
+                                                        </Form.Group>
+                                                    )
+                                                })
+                                            }</>
+                                    }
+
                                 </div>
                             ))
                         }
