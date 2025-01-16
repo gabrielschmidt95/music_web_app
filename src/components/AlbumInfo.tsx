@@ -88,7 +88,6 @@ const SelectArtist = ({ albumInfo, handleShowModal, setModalType, handleShowModa
                                 
                             </ListGroup>
                         </Card>
-                        // <ListGroup.Item key={disc.discNumber}>Disco {disc.discNumber} - Peso(g) {disc.weight} g - Matriz: {disc.matriz}</ListGroup.Item>
                     )) : ''}
                 </Col>
             </Row>

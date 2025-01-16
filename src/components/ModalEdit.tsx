@@ -302,7 +302,7 @@ const ModalEdit = ({ showModal, modalType, albumInfo, handleCloseModal, refreshA
                                 }
                             />
                         </Form.Group>
-                        {album?.discs === undefined ? <></> :
+                        {!album?.discs ? <></> :
                             album?.discs.map((disc, _) => (
                                 <div key={disc.discNumber}>
                                     {
