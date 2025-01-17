@@ -6,12 +6,12 @@ import * as FaIcons from 'react-icons/fa'
 function numberToLetter(number: number) {
     let result = '';
     do {
-      const letter = String.fromCharCode(65 + (number % 26));
-      result = letter + result;
-      number = Math.floor(number / 26) - 1;
+        const letter = String.fromCharCode(65 + (number % 26));
+        result = letter + result;
+        number = Math.floor(number / 26) - 1;
     } while (number >= 0)
     return result;
-  }
+}
 
 const SelectArtist = ({ albumInfo, handleShowModal, setModalType, handleShowModalDelete, handleShowModalFixDiscogs }: {
     albumInfo: Album | undefined, handleShowModal: () => void,
@@ -47,10 +47,6 @@ const SelectArtist = ({ albumInfo, handleShowModal, setModalType, handleShowModa
                 <Col>
                     <Image src={albumInfo.discogs.cover_image}
                         alt='Capa do Album' thumbnail />
-                    <hr />
-                    <p>Discogs Fixado {albumInfo.discogs.len === 1 ? <FaIcons.FaCheckSquare></FaIcons.FaCheckSquare> : <FaIcons.FaTimes></FaIcons.FaTimes>} {albumInfo.discogs.len !== 1 ? albumInfo.discogs.len : ""}</p>
-                    <p>Spotify {albumInfo.spotify.external_urls.spotify !== "" ? <FaIcons.FaCheckSquare></FaIcons.FaCheckSquare> : <FaIcons.FaTimes></FaIcons.FaTimes>}</p>
-                    <hr />
                 </Col>
                 <Col>
                     <ListGroup variant="flush">
@@ -69,6 +65,8 @@ const SelectArtist = ({ albumInfo, handleShowModal, setModalType, handleShowModa
                         {albumInfo.discs?.[0]?.matriz ? '' : <ListGroup.Item>Matriz: {albumInfo.matriz}</ListGroup.Item>}
                         <ListGroup.Item>Lote: {albumInfo.lote}</ListGroup.Item>
                         <ListGroup.Item>Observação: {albumInfo.obs}</ListGroup.Item>
+                        <ListGroup.Item>Discogs Fixado {albumInfo.discogs.len === 1 ? <FaIcons.FaCheckSquare></FaIcons.FaCheckSquare> : <FaIcons.FaTimes></FaIcons.FaTimes>} {albumInfo.discogs.len !== 1 ? albumInfo.discogs.len : ""}</ListGroup.Item>
+                        <ListGroup.Item>Spotify {albumInfo.spotify.external_urls.spotify !== "" ? <FaIcons.FaCheckSquare></FaIcons.FaCheckSquare> : <FaIcons.FaTimes></FaIcons.FaTimes>}</ListGroup.Item>
                     </ListGroup>
                 </Col>
             </Row>
@@ -76,7 +74,7 @@ const SelectArtist = ({ albumInfo, handleShowModal, setModalType, handleShowModa
             <Row>
                 <Col>
                     {albumInfo.discs ? albumInfo.discs.map((disc, _) => (
-                        <Card key={disc.discNumber} style={{ width: '18rem' }}>
+                        <Card key={disc.discNumber} style={{ width: 'auto', marginBottom: '1rem' }}>
                             <Card.Header>Disco {disc.discNumber}</Card.Header>
                             <ListGroup variant="flush">
                                 {albumInfo?.media.startsWith('VINIL') ? <ListGroup.Item> Peso: {disc.weight} g</ListGroup.Item> : ''}
@@ -85,7 +83,6 @@ const SelectArtist = ({ albumInfo, handleShowModal, setModalType, handleShowModa
                                         <ListGroup.Item key={matriz}>Matriz {numberToLetter(index)}: {matriz}</ListGroup.Item>
                                     ))
                                 ) : <ListGroup.Item>Matriz: {disc.matriz[0]}</ListGroup.Item>}
-                                
                             </ListGroup>
                         </Card>
                     )) : ''}
