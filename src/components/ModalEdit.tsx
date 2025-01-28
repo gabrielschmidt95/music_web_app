@@ -306,7 +306,7 @@ const ModalEdit = ({ showModal, modalType, albumInfo, handleCloseModal, refreshA
                             album?.discs.map((disc, _) => (
                                 <div key={disc.discNumber}>
                                     {
-                                        !album?.media.startsWith('VINIL') ? <></> :
+                                        !(album?.media ?? '').startsWith('VINIL') ? <></> :
 
                                             <Form.Group className="mb-3" controlId={`editForm.ControlInputDiscDuration${disc.discNumber}`}>
                                                 <Form.Label>Peso do Disco {disc.discNumber} (g)</Form.Label>
@@ -322,7 +322,7 @@ const ModalEdit = ({ showModal, modalType, albumInfo, handleCloseModal, refreshA
                                             </Form.Group>
                                     }
                                     {
-                                        !album?.media.startsWith('VINIL') ? <Form.Group className="mb-3" controlId={`editForm.ControlInputDiscDuration${disc.discNumber}`}>
+                                        album?.media && !album.media.startsWith('VINIL') ? <Form.Group className="mb-3" controlId={`editForm.ControlInputDiscDuration${disc.discNumber}`}>
                                             <Form.Label>Matriz do Disco {disc.discNumber}</Form.Label>
                                             <Form.Control
                                                 type="text"
