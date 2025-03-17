@@ -262,16 +262,6 @@ const ModalEdit = ({ showModal, modalType, albumInfo, handleCloseModal, refreshA
                                 }
                             />
                         </Form.Group>
-                        <Form.Group className="mb-3" controlId="editForm.ControlInput11">
-                            <Form.Label>Matriz</Form.Label>
-                            <Form.Control
-                                as="textarea"
-                                defaultValue={album?.matriz}
-                                onChange={
-                                    (e) => handleInputChange('matriz', e.target.value)
-                                }
-                            />
-                        </Form.Group>
                         <Form.Group className="mb-3" controlId="editForm.ControlInput12">
                             <Form.Label>Lote</Form.Label>
                             <Form.Control

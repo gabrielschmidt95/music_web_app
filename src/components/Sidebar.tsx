@@ -126,7 +126,7 @@ const Home: React.FunctionComponent = () => {
                             }
                             setExportLoadingCSV(true);
                             ExportCollection().then(data => {
-                                const headers = 'RELEASE_YEAR;ARTIST;TITLE;MEDIA;PURCHASE;ORIGIN;EDITION_YEAR;IFPI_MASTERING;IFPI_MOULD;BARCODE;MATRIZ;LOTE;OBS;DISCOGS_ID;SPOTIFY_ID\n'
+                                const headers = 'RELEASE_YEAR;ARTIST;TITLE;MEDIA;PURCHASE;ORIGIN;EDITION_YEAR;IFPI_MASTERING;IFPI_MOULD;BARCODE;LOTE;OBS;DISCOGS_ID;SPOTIFY_ID\n'
                                 const csv = data.map((item) => {
                                     return [
                                         item.releaseYear,
@@ -139,7 +139,6 @@ const Home: React.FunctionComponent = () => {
                                         item.ifpiMastering,
                                         item.ifpiMould,
                                         item.barcode,
-                                        item.matriz,
                                         item.lote,
                                         item.obs,
                                         item.discogs.id,
