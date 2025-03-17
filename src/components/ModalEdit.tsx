@@ -226,7 +226,7 @@ const ModalEdit = ({ showModal, modalType, albumInfo, handleCloseModal, refreshA
                                 type="number"
                                 min={1900}
                                 max={new Date().getFullYear() + 1}
-                                defaultValue={album?.editionYear}
+                                defaultValue={album?.editionYear ?? ''}
                                 onChange={
                                     (e) => handleInputChange('editionYear', parseInt(e.target.value))
                                 }

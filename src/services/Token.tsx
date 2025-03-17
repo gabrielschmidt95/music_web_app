@@ -25,7 +25,7 @@ async function FetchToken(): Promise<boolean> {
             "grant_type": "client_credentials"
         }),
     };
-    const response = await fetch(`https://${process.env.REACT_APP_OAUTH_DOMAIN}/oauth/token`, requestOptions);
+    const response = await fetch(`https://${process.env.REACT_APP_AUTH0_DOMAIN}/oauth/token`, requestOptions);
     const data = await response.json();
     sessionStorage.setItem("token", data.access_token);
 
