@@ -44,3 +44,14 @@ You don’t have to ever use `eject`. The curated feature set is suitable for sm
 You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
 
 To learn React, check out the [React documentation](https://reactjs.org/).
+
+
+# Replace Code
+```
+cd src
+npm run build
+ssh -i <SSH_PUBLIC_KEY> <USER>@<MACHINE_IP> sudo rm -rf /var/www/music-app \
+&& ssh -i <SSH_PUBLIC_KEY> <USER>@<MACHINE_IP> sudo mkdir /var/www/music-app \
+&& ssh -i <SSH_PUBLIC_KEY> <USER>@<MACHINE_IP> sudo chown <USER> /var/www/music-app \
+&& scp -i <SSH_PUBLIC_KEY> -r ~/<YOUR_PATH>/music_web_app/build/* <USER>@<MACHINE_IP>:/var/www/music-app
+````
