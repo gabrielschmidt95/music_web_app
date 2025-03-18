@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { Row, Col, Container, Button } from 'react-bootstrap';
 
-import {AlbumData} from '../models/Album'
+import { AlbumData, Discs } from '../models/Album'
 import Artist from '../models/Artist'
 
 import Artists from '../services/Artists'
@@ -139,6 +139,7 @@ const Home: React.FunctionComponent = () => {
                                         {
                                             id: '',
                                             title: '',
+                                            media: 'CD',
                                             artist: artist?.name as string,
                                             discogs: {
                                                 cover_image: '',
@@ -148,7 +149,14 @@ const Home: React.FunctionComponent = () => {
                                                 external_urls: {
                                                     spotify: ''
                                                 }
-                                            }
+                                            },
+                                            discs: [
+                                                {
+                                                    discNumber: '1',
+                                                    weight: '',
+                                                    matriz: ['NA']
+                                                }
+                                            ] as Discs[],
                                         } as AlbumData
                                     );
                                     setTimeout(() => {

@@ -277,7 +277,7 @@ const ModalEdit = ({ showModal, modalType, albumInfo, handleCloseModal, refreshA
                             <Form.Control
                                 type="number"
                                 min={1}
-                                defaultValue={album?.discs ? album?.discs.length : 0}
+                                defaultValue={album?.discs ? album?.discs.length : 1}
                                 onChange={
                                     (e) => {
                                         let len = album?.discs ? album?.discs.length : 1;
